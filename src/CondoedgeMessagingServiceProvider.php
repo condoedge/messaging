@@ -1,6 +1,6 @@
 <?php
 
-namespace Condoedge\Surveys;
+namespace Condoedge\Messaging;
 
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\ServiceProvider;

@@ -10,7 +10,10 @@
     "minimum-stability": "stable",
     "require": {
         "php": ">=8.0",
-        "laravel/framework": ">=8.0"
+        "laravel/framework": ">=8.0",
+        "google/apiclient": "^2.15.0",
+        "league/oauth2-client": "^2.6",
+        "microsoft/microsoft-graph": "^1.73"
     },
     "extra": {
         "laravel": {
