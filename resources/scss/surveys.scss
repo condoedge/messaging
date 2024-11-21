@@ -1,0 +1,15 @@
+.choice_amount_input {
+    display: none;
+}
+
+.choices_show_amount .choice_amount_input {
+    display: revert;
+}
+
+.choice_quantity_input {
+    display: none;
+}
+
+.choices_show_quantity .choice_quantity_input {
+    display: revert;
+}
