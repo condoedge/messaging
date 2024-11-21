@@ -74,7 +74,7 @@ class CondoedgeMessagingServiceProvider extends ServiceProvider
     protected function loadConfig()
     {
         $dirs = [
-            'condoedge-surveys' => __DIR__.'/../config/condoedge-surveys.php',            
+            'condoedge-messaging' => __DIR__.'/../config/condoedge-messaging.php',            
         ];
 
         foreach ($dirs as $key => $path) {
@@ -88,7 +88,7 @@ class CondoedgeMessagingServiceProvider extends ServiceProvider
     protected function loadRelationsMorphMap()
     {
         Relation::morphMap([
-            
+
         ]);
     }
 }
