@@ -1,17 +1,17 @@
 <?php 
 
-use Google;
-use App\Models\Team;
+use Google\Client;
+use Google\Service;
 
 function initGClient()
 {
-    $client = new Google\Client();
+    $client = new Client();
 
     $client->setClientId(env('GMAIL_CLIENT_ID'));
     $client->setClientSecret(env('GMAIL_CLIENT_SECRET'));
     $client->setRedirectUri(route('gmail-inbox'));
 
-    $client->addScope(Google\Service\Gmail::MAIL_GOOGLE_COM);
+    $client->addScope(Service\Gmail::MAIL_GOOGLE_COM);
     $client->setAccessType('offline');
 
     return $client;
@@ -19,9 +19,9 @@ function initGClient()
 
 function getGClient()
 {
-    $graph = new Graph();
-    $graph->setAccessToken(getCurrentUserAccessToken());
-    return $graph;
+    $client = new Client();
+    $client->setAccessToken(getCurrentGoogleAccessToken());
+    return $client;
 }
 
 function getCurrentGoogleToken()
