@@ -1,8 +1,8 @@
 <?php 
 
-namespace App\Models\GoogleApi;
+namespace Condoedge\Messaging\Models\GoogleApi;
 
-trait HasGoogleTokenTokens
+trait HasGmailTokens
 {
 
     /* RELATIONSHIPS */

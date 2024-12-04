@@ -9,9 +9,10 @@ function initGClient()
 
     $client->setClientId(env('GMAIL_CLIENT_ID'));
     $client->setClientSecret(env('GMAIL_CLIENT_SECRET'));
-    $client->setRedirectUri(route('gmail-inbox'));
+    $client->setRedirectUri(route('google-sso-return'));
 
     $client->addScope(Service\Gmail::MAIL_GOOGLE_COM);
+    $client->addScope(Service\Oauth2::USERINFO_EMAIL);
     $client->setAccessType('offline');
 
     return $client;

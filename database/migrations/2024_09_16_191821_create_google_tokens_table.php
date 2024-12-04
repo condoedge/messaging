@@ -23,7 +23,7 @@ return new class extends Migration
             $table->string('display_name')->nullable();
             $table->string('user_timezone')->nullable();
 
-            $table->string('ms_user_id', 500)->nullable();
+            $table->string('gg_user_id', 500)->nullable();
             $table->text('inbox_mailbox_id')->nullable();
             $table->text('sent_mailbox_id')->nullable();
             $table->text('archived_mailbox_id')->nullable();

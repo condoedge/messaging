@@ -1,15 +1,16 @@
 <?php
 
-namespace Condoedge\Surveys\Http\Controllers;
+namespace Condoedge\Messaging\Http\Controllers;
 
-use Condoedge\Surveys\Models\GoogleApi\GoogleToken;
+use Condoedge\Messaging\Models\GoogleApi\GoogleToken;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
 class GoogleSsoController extends Controller
 {
     public function redirectToSso()
     {
-        $client = initGClient();  
+        $client = initGClient();
 
         return redirect($client->createAuthUrl());
     }
@@ -22,20 +23,16 @@ class GoogleSsoController extends Controller
             try {
             
                 $client = initGClient();
-                $client->authenticate($code);
+                $client->authenticate($authCode);
                 $accessToken = $client->getAccessToken();
                 $client->setAccessToken($accessToken);
 
-                //TODO SEE OUTLOOK GET /me?$select=displayName,mail,mailboxSettings,userPrincipalName
-                $user = null; /*$graph->createRequest('GET', '/me?$select=displayName,mail,mailboxSettings,userPrincipalName')
-                  ->setReturnType(Model\User::class)
-                  ->execute();*/
-
-                dd($accessToken, $client, $user);
+                $oauth2 = new \Google\Service\Oauth2($client);
+                $user = $oauth2->userinfo_v2_me->get();
 
                 GoogleToken::storeGtTokens($accessToken, $user);
 
-                return redirect('new-inbox');
+                return redirect('gmail-inbox');
             }
             catch (\League\OAuth2\Client\Provider\Exception\IdentityProviderException $e) {
                 return redirect('/')
@@ -51,10 +48,10 @@ class GoogleSsoController extends Controller
 
     public function signout()
     {
-        $ot = getCurrentUserToken();
+        $ot = getCurrentGoogleToken();
 
         if ($ot) {
-            auth()->user()->setCurrentOutlookToken(null);
+            auth()->user()->setCurrentGoogleTokenToken(null);
             $ot->delete();
         }
 

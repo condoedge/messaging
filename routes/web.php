@@ -1,6 +1,6 @@
 <?php
 
-use Condoedge\Surveys\Http\Controllers\GoogleSsoController;
+use Condoedge\Messaging\Http\Controllers\GoogleSsoController;
 
 //TODO KEEP AN EXAMPLE LIKE THIS WHEN YOU FINISH MIGRATING
 Route::layout('layouts.dashboard')->middleware(['auth'])->group(function(){

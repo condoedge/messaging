@@ -1,6 +1,6 @@
 <?php
 
-namespace Condoedge\Surveys\Models\GoogleApi;
+namespace Condoedge\Messaging\Models\GoogleApi;
 
 use App\Models\Model;
 
@@ -17,32 +17,30 @@ class GoogleToken extends Model
         return !$this->access_token || !$this->refresh_token || !$this->token_expires;
     }
 
+    public function shouldRefresh()
+    {
+        return $this->isEmptyOrNotUsable() || ($this->token_expires <= time() + 300); // Token is expired (or very close to it), so let's refresh
+    }
+
     public function getOrRefreshToken()
     {
         if ($this->isEmptyOrNotUsable()) {
+            if ($this->access_token && !$this->refresh_token) { //This case should not happen but if it does we need to restart the process
+                initGClient()->revokeToken($this->access_token);
+            }
             return '';
         }
     
-        if ($this->token_expires <= time() + 300) { // Token is expired (or very close to it), so let's refresh
+        if ($this->shouldRefresh()) {
             
-            $oauthClient = new \League\OAuth2\Client\Provider\GenericProvider([
-                'clientId'                => config('azure.appId'),
-                'clientSecret'            => config('azure.appSecret'),
-                'redirectUri'             => config('azure.redirectUri'),
-                'urlAuthorize'            => config('azure.authority').config('azure.authorizeEndpoint'),
-                'urlAccessToken'          => config('azure.authority').config('azure.tokenEndpoint'),
-                'urlResourceOwnerDetails' => '',
-                'scopes'                  => config('azure.scopes')
-            ]);
+            $client = initGClient();
 
             try {
-                $newToken = $oauthClient->getAccessToken('refresh_token', [
-                  'refresh_token' => $this->refresh_token
-                ]);
+                $newToken = $client->fetchAccessTokenWithRefreshToken($this->refresh_token);
 
-                $this->updateMsTokens($newToken);
+                $this->updateGtTokens($newToken);
 
-                return $newToken->getToken();
+                return $newToken['access_token'];
             } catch (\League\OAuth2\Client\Provider\Exception\IdentityProviderException $e) {
                 return '';
             }
@@ -62,47 +60,37 @@ class GoogleToken extends Model
     }
 
     /* ACTIONS */
-    public function updateMsTokens($newToken)
+    public function updateGtTokens($newToken)
     {
-        $this->access_token = $newToken->getToken();
-        $this->refresh_token = $newToken->getRefreshToken();
-        $this->token_expires = $newToken->getExpires();
+        $this->access_token = $newToken['access_token'] ?? null;
+        $this->refresh_token = $newToken['refresh_token'] ?? null;
+        $this->token_expires = $newToken['created'] ?? null;
 
         $this->save();
     }
 
     public static function storeGtTokens($accessToken, $user) 
     {
-        $userEmail = null !== $user->getMail() ? $user->getMail() : $user->getUserPrincipalName();
+        $userEmail = $user->getEmail();
 
         //GET OR CREATE TOKEN
-        $ot = OutlookToken::forAuthUser()->where('user_email', $userEmail)->first();
+        $ot = GoogleToken::forAuthUser()->where('user_email', $userEmail)->first();
 
         if (!$ot) {
-            $ot = new OutlookToken();
+            $ot = new GoogleToken();
             $ot->user_id = auth()->id();
             $ot->user_email = $userEmail;
         }
 
         //UPDATE TOKEN
-        $ot->ms_user_id = $user->getId();
-        $ot->display_name = $user->getDisplayName();
-        $ot->user_timezone = $user->getMailboxSettings()->getTimeZone();
+        $ot->gg_user_id = $user->getId();
+        $ot->display_name = $user->getGivenName().' '.$user->getFamilyName();
+        //$ot->user_timezone = $user->getMailboxSettings()->getTimeZone();
 
-        $ot->updateMsTokens($accessToken);
+        $ot->updateGtTokens($accessToken);
 
         //SET TOKEN ON AUTH USER
-        auth()->user()->setCurrentOutlookToken($ot->id);
+        auth()->user()->setCurrentGoogleTokenToken($ot->id);
 
-        $mailboxes = GraphHelper::getMailboxes()->mapWithKeys(fn($mailbox) => [
-            $mailbox->getDisplayName() => $mailbox->getId(),
-        ]);
-
-        $ot->inbox_mailbox_id = $mailboxes['Inbox'] ?? null;
-        $ot->sent_mailbox_id = $mailboxes['Sent Items'] ?? null;
-        $ot->archived_mailbox_id = $mailboxes['Archive'] ?? null;
-        $ot->deleted_mailbox_id = $mailboxes['Deleted Items'] ?? null;
-        $ot->draft_mailbox_id = $mailboxes['Drafts'] ?? null;
-        $ot->save();
     }
 }
