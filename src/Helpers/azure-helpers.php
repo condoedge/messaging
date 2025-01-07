@@ -99,14 +99,14 @@ function _MessageAttachment($messageId, $attachment)
     return _ThumbWrapper([
         thumbStyle(
             _Html('<i class="'.getIconFromMimeType($attachment->getContentType()).'"></i>')->class('text-2xl text-center text-gray-700')
-        ),
+        )->class('mb-2 flex flex-center group2-hover:hidden'),
         thumbStyle(
             _Link()->icon('download')->balloon('Download', 'down-right')->class('text-xl')
                 ->href('outlook.download', [
                     'message_id' => $messageId,
                     'att_id' => $attachment->getId(),
                 ])->inNewTab(),
-        )->class('mb-2 hidden group2-hover:flex'),
+        )->class('mb-2 hidden flex-center group2-hover:flex'),
 
         _Html($attachment->getName())->class('text-xs font-semibold truncate'),
 
