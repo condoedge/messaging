@@ -101,11 +101,19 @@ function _MessageAttachment($messageId, $attachment)
             _Html('<i class="'.getIconFromMimeType($attachment->getContentType()).'"></i>')->class('text-2xl text-center text-gray-700')
         )->class('mb-2 flex flex-center group2-hover:hidden'),
         thumbStyle(
-            _Link()->icon('download')->balloon('Download', 'down-right')->class('text-xl')
-                ->href('outlook.download', [
-                    'message_id' => $messageId,
-                    'att_id' => $attachment->getId(),
-                ])->inNewTab(),
+            _Flex2(
+                _Link()->icon('document-add')->balloon('save-as', 'down-left')
+                    ->get('outlook-attachment.save', [
+                        'message_id' => $messageId,
+                        'att_id' => $attachment->getId(),
+                    ])
+                    ->inPopup(),
+                _Link()->icon('download')->balloon('Download', 'down-right')->class('text-xl')
+                    ->href('outlook.download', [
+                        'message_id' => $messageId,
+                        'att_id' => $attachment->getId(),
+                    ])->inNewTab(),
+            ),
         )->class('mb-2 hidden flex-center group2-hover:flex'),
 
         _Html($attachment->getName())->class('text-xs font-semibold truncate'),
