@@ -2,12 +2,11 @@
 
 use Condoedge\Messaging\Http\Controllers\GoogleSsoController;
 
-//TODO KEEP AN EXAMPLE LIKE THIS WHEN YOU FINISH MIGRATING
+//Call them in own project
 Route::layout('layouts.dashboard')->middleware(['auth'])->group(function(){
 
-    //Call them in own project
-    //Route::get('surveys-list', Condoedge\Surveys\Kompo\SurveyEditor\SurveysList::class)->name('surveys.list');
-    //Route::get('survey-edit/{id}', Condoedge\Surveys\Kompo\SurveyEditor\SurveyFormPage::class)->name('survey.edit');
+    //Custom Inbox Routes
+    //Route::get('my-inbox', Condoedge\Messaging\Kompo\CustomInbox\InboxView::class)->class('custom-inbox');
 
 });
 

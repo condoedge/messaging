@@ -1,0 +1,10 @@
+SURE CHANGES
+- in thread_boxes, fill email_account_id with data (replacing user_id)
+
+
+
+
+NOT SURE YET
+- email_account 1 per email => remove duplicate emails and merge somehow
+
+
