@@ -4,7 +4,7 @@ namespace Condoedge\Messaging\Kompo\CustomInbox;
 
 use App\Models\Messaging\EmailAccount;
 use App\Models\Messaging\Thread;
-use Kompo\Auth\Common\Query;
+use Kompo\Query;
 
 class InboxView extends Query
 {
@@ -14,7 +14,7 @@ class InboxView extends Query
     public $id = 'inbox-view'; //also used in js()
     protected $moreInboxFilters = 'more-inbox-filters'; //also used in js()
     public $class = 'bg-white';
-    public $style = 'height: calc(100vh - 74px); margin-top: -2vh';
+    public $style = 'height: calc(100vh - 122px); margin-top: -2vh';
     public $containerClass = '';
 
     //public $activeClass = 'bg-level4 bg-opacity-50 shadow-lg';
@@ -122,8 +122,6 @@ class InboxView extends Query
                 break;
         }
 
-        //dd(\Str::replaceArray('?', $q->getBindings(), $q->toSql()));
-
         return $q->orderByDesc('last_message_at');
     }
 
@@ -132,10 +130,10 @@ class InboxView extends Query
         return _Rows(
             _Select()->name('used_inbox', false)
                 ->searchOptions(0, 'searchInboxes', 'retrieveInbox')->class('mb-0 pt-2 px-4')->class('noClear')
-                ->value(auth()->user()->getSenderAccountId())
+                ->value(currentMailboxId())
                 ->selfPost('impersonateMailbox')->redirect('inbox'),
             _Rows(
-                _CeButtonGroup()
+                _ButtonGroup()
                     ->name('filters', false)
                     ->options([
                         1 => $this->iconFilter('direct-inbox', 'Inbox'),
@@ -174,8 +172,6 @@ class InboxView extends Query
                 _Input('search-messages')->placeholder('messaging.min3-characters')->type('search')
                     ->name('content', false)
                     ->filter()->class('mb-0'),
-                _GlobalUnionSelect()->filter(),
-                _UnitSelect()->filter(),
                 _TagsMultiSelect()->filter(),
             )->id($this->moreInboxFilters)
             ->class('pt-2 px-4 space-y-2')
@@ -192,7 +188,7 @@ class InboxView extends Query
                 new InboxMessages(['thread_id' => $displayedThreadId])
             )->id('inbox-message-panel')
             ->class('border-l border-gray-100 bg-gray-100 ml-0')
-            ->class('sm:w-1/2vw md:w-2/3vw xl:w-3/5vw 2xl:w-2/3vw')
+            ->class('sm:w-[50vw] md:w-[66vw] xl:w-[60vw] 2xl:w-[66vw]')
             ->closable();
     }
 
@@ -366,7 +362,7 @@ class InboxView extends Query
     protected function inPanelUpdateHistory($e, $threadId)
     {
         $e->inPanel('inbox-message-panel');
-        $e->setHistory('inbox', [
+        $e->setHistory('my-inbox', [
             'thread_id' => $threadId
         ]);
     }

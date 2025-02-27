@@ -21,22 +21,6 @@ function getCurrentUserAccessToken()
 }
 
 /* ACTIONS */
-function checkRecipientsAreValid()
-{
-    $emails = Message::getRequestRecipients();
-
-    $invalidEmails = collect($emails)->filter(fn($email) => !isValidEmail($email));
-
-    if ($invalidEmails->count()) {
-        abort(403, '"'.$invalidEmails->first().'" '.__('is not a valid email address! Please correct it and try again.'));
-    }
-}
-
-function isValidEmail($email)
-{
-    return filter_var(trim($email), FILTER_VALIDATE_EMAIL);
-}
-
 function searchOutlookRecipients($search)
 {
     $existing = Team::newMatchEmails($search);
@@ -55,35 +39,6 @@ function searchOutlookRecipients($search)
 }
 
 /* ELEMENTS */
-function _RecipientsMultiSelect()
-{
-    return _MultiSelect()->placeholder('messaging.search-recipients')->class('recipients-multiselect mb-2')
-        ->name('recipients', false)
-        ->searchOptions(2);
-}
-function _CcToggle()
-{
-    return _Rows(
-        _Link('CC / BCC')->toggleId('cc-bb-recipients')->class('mb-2 text-gray-700 text-xs'),
-        _Rows(
-            _CcRecipientsMultiSelect(),
-            _BccRecipientsMultiSelect(),
-        )->id('cc-bb-recipients'),
-    );
-}
-function _CcRecipientsMultiSelect()
-{
-    return _MultiSelect()->placeholder('cc:')->class('recipients-multiselect mb-2')
-        ->name('cc_recipients', false)
-        ->searchOptions(2);
-}
-function _BccRecipientsMultiSelect()
-{
-    return _MultiSelect()->placeholder('bcc:')->class('recipients-multiselect mb-4')
-        ->name('bcc_recipients', false)
-        ->searchOptions(2);
-}
-
 function _MessageAttachments($messageId, $attachments)
 {
     if (!$attachments || !$attachments->count()) {

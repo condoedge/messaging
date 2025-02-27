@@ -2,26 +2,14 @@
 
 namespace Condoedge\Messaging\Models\CustomInbox;
 
-use App\Models\Model;
-use App\Models\Traits\BelongsToTeam;
+use Kompo\Auth\Models\Model;
 
 class Distribution extends Model
 {    
-    /* RELATIONS */
-    public function message()
-    {
-        return $this->belongsTo(Message::class);
-    }
+    use \Condoedge\Messaging\Models\CustomInbox\Traits\BelongsToEmailAccountTrait;
+    use \Condoedge\Messaging\Models\CustomInbox\Traits\BelongsToMessageTrait;
 
-    public function emailAccount()
-    {
-        return $this->belongsTo(EmailAccount::class);
-    }
+    /* RELATIONS */
 
     /* SCOPES */
-    public function scopeAuthUserAsRecipient($query, $allMailboxes = false)
-    {
-        $query->whereIn('email_account_id', auth()->user()->getActiveEmailAccountIds($allMailboxes))
-            ->whereDoesntHave('message', fn($q) => $q->isDraft());
-    }
 }

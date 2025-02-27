@@ -17,12 +17,12 @@ class CreateAttachmentsTable extends Migration
 
             addMetaData($table);
 
-            $table->foreignId('team_id')->nullable()->constrained();
             $table->foreignId('message_id')->constrained();
             $table->string('path', 1000)->nullable();
             $table->string('name')->nullable();
             $table->string('mime_type')->nullable();
             $table->integer('size')->nullable();
+            $table->string('disk')->nullable();
         });
     }
 

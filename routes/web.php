@@ -1,13 +1,34 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
 use Condoedge\Messaging\Http\Controllers\GoogleSsoController;
 
 //Call them in own project
 Route::layout('layouts.dashboard')->middleware(['auth'])->group(function(){
 
     //Custom Inbox Routes
-    //Route::get('my-inbox', Condoedge\Messaging\Kompo\CustomInbox\InboxView::class)->class('custom-inbox');
+    Route::get('my-inbox/{thread_id?}', Condoedge\Messaging\Kompo\CustomInbox\InboxView::class)->name('custom-inbox');
+    
+    Route::get('my-inbox-new-thread', Condoedge\Messaging\Kompo\CustomInbox\ThreadForm::class)->name('new.thread');
+    
+    Route::get('thread-settings/{id?}', Condoedge\Messaging\Kompo\CustomInbox\ThreadSettingsForm::class)->name('thread-settings.form');
 
+});
+
+Route::middleware(['auth'])->group(function(){
+    Route::post('enableThreadSettingsOpen', fn() => enableThreadSettingsOpen());
+    Route::post('disableThreadSettingsOpen', fn() => disableThreadSettingsOpen());
+
+    Route::get('inbox/message/{id}', Condoedge\Messaging\Kompo\CustomInbox\InboxMessages::class)->name('inbox.message');
+
+    Route::get('message-reply/{parent_id}', Condoedge\Messaging\Kompo\CustomInbox\MessageReplyForm::class)->name('message-reply.form');
+    Route::get('message-reply-all/{parent_id}', Condoedge\Messaging\Kompo\CustomInbox\MessageReplyAllForm::class)->name('message-reply-all.form');
+    Route::get('message-forward/{parent_id}', Condoedge\Messaging\Kompo\CustomInbox\MessageForwardForm::class)->name('message-forward.form');
+    Route::get('message-draft/{id}', Condoedge\Messaging\Kompo\CustomInbox\MessageDraftForm::class)->name('message-draft.form');
+
+    Route::get('thread-groups', Condoedge\Messaging\Kompo\CustomInbox\ThreadGroupsForm::class)->name('thread-groups');
+
+    Route::get('attm-download/{id}', Condoedge\Messaging\Http\Controllers\AttachmentDownloadController::class)->name('attm.download');
 });
 
 

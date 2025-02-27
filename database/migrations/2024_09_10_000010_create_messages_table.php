@@ -21,13 +21,13 @@ class CreateMessagesTable extends Migration
             $table->foreignId('sender_id')->constrained('email_accounts');
             $table->foreignId('message_id')->nullable()->constrained();
             $table->integer('type')->default(1);
-            //$table->tinyInteger('bcc')->default(1);
-            //$table->tinyInteger('is_draft')->nullable();
-            //$table->string('external_id')->nullable();
             $table->string('uuid')->nullable();
             $table->string('subject', 1000)->nullable();
             $table->string('summary')->nullable();
+            $table->longText('text')->nullable(); //null when sending an attachment only
             $table->longText('html')->nullable(); //null when sending an attachment only
+            $table->tinyInteger('is_draft')->nullable();
+            $table->string('external_id')->nullable();
         });
     }
 

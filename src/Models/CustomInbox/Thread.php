@@ -3,6 +3,7 @@
 namespace Condoedge\Messaging\Models\CustomInbox;
 
 use Kompo\Auth\Models\Model;
+use App\Models\Messaging\Thread as AppThread;
 
 class Thread extends Model
 {
@@ -40,7 +41,7 @@ class Thread extends Model
 
     public function orderedMessages()
     {
-        return $this->messages()->with('attachments', 'read', 'review', 'sender.entity', 'recipients.entity')
+        return $this->messages()->with('attachments', 'read', 'sender.entity', 'recipients.entity')
             ->orderBy('created_at', 'DESC');
     }
 
@@ -56,11 +57,7 @@ class Thread extends Model
 
     public function box()
     {
-        $emailAccount = auth()->user()->getSenderAccount();
-
-        return $this->hasOne(ThreadBox::class)
-            ->where('entity_id', $emailAccount->entity_id)
-            ->where('entity_type', $emailAccount->entity_type);
+        return $this->hasOne(ThreadBox::class)->where('email_account_id', currentMailboxId());
     }
 
     public function boxTrash()
@@ -71,7 +68,7 @@ class Thread extends Model
     /* ATTRIBUTES */
     public function getColorAttribute()
     {
-        return Thread::flagColors()[$this->flag_color ?: Thread::FLAG_NONE];
+        return AppThread::flagColors()[$this->flag_color ?: AppThread::FLAG_NONE];
     }
 
     public function getIsArchivedAttribute()
@@ -89,35 +86,35 @@ class Thread extends Model
     {
         return [
             //Thread::FLAG_NONE => __('messaging.no-status'),
-            Thread::FLAG_SORT => __('messaging.to-sort'),
-            Thread::FLAG_WAIT => __('messaging.waiting'),
-            Thread::FLAG_REPLY => __('messaging.to-reply'),
-            Thread::FLAG_5 => __('messaging.to-reply'),
-            Thread::FLAG_6 => __('messaging.to-reply'),
+            AppThread::FLAG_SORT => __('messaging.to-sort'),
+            AppThread::FLAG_WAIT => __('messaging.waiting'),
+            AppThread::FLAG_REPLY => __('messaging.to-reply'),
+            AppThread::FLAG_5 => __('messaging.to-reply'),
+            AppThread::FLAG_6 => __('messaging.to-reply'),
         ];
     }
 
     public static function flagColors()
     {
         return [
-            Thread::FLAG_NONE => 'bg-gray-100',
-            Thread::FLAG_SORT => 'bg-level2',
-            Thread::FLAG_WAIT => 'bg-warning',
-            Thread::FLAG_REPLY => 'bg-info',
-            Thread::FLAG_5 => 'bg-positive',
-            Thread::FLAG_6 => 'bg-danger',
+            AppThread::FLAG_NONE => 'bg-gray-100',
+            AppThread::FLAG_SORT => 'bg-level2',
+            AppThread::FLAG_WAIT => 'bg-warning',
+            AppThread::FLAG_REPLY => 'bg-info',
+            AppThread::FLAG_5 => 'bg-positive',
+            AppThread::FLAG_6 => 'bg-danger',
         ];
     }
 
     public static function defaultFlagBg()
     {
-        return Thread::flagColors()[Thread::FLAG_NONE];
+        return AppThread::flagColors()[AppThread::FLAG_NONE];
     }
 
     public static function flagOptions($dimensions = 'w-6 h-6')
     {
-        return collect(Thread::flagLabels())->mapWithKeys(fn($label, $key) => [
-            $key => _Html()->class('rounded-full')->class($dimensions)->class(Thread::flagColors()[$key])->balloon($label, 'up-right')
+        return collect(AppThread::flagLabels())->mapWithKeys(fn($label, $key) => [
+            $key => _Html()->class('rounded-full')->class($dimensions)->class(AppThread::flagColors()[$key])->balloon($label, 'up-right')
         ]);
     }
 
@@ -125,13 +122,14 @@ class Thread extends Model
     {
         return _LinkGroup()->name('flag_color')
             ->containerClass('flex '.$spacing)->optionClass('cursor-pointer !bg-transparent')->class('mb-0')
-            ->options(Thread::flagOptions($dimensions));
+            ->options(AppThread::flagOptions($dimensions));
     }
 
     /* ACTIONS */
     public static function pusherBroadcast($teamId = null)
     {
-        broadcast(new MessageSent($teamId ?: currentTeamId()))->toOthers();
+        //muted until we activate pusher
+        //broadcast(new MessageSent($teamId ?: currentTeamId()))->toOthers();
     }
 
     public static function pusherRefresh()
@@ -150,22 +148,16 @@ class Thread extends Model
         if(!($cb = $this->box)){
             $cb = new ThreadBox();
             $cb->thread_id = $this->id;
-            $cb->setUserId();
         }
         $cb->box = $box;
-
-        $emailAccount = auth()->user()->getSenderAccount();
-        $cb->entity_id = $emailAccount->entity_id;
-        $cb->entity_type = $emailAccount->entity_type;
+        $cb->email_account_id = currentMailboxId();
 
         $cb->save();
     }
 
-    public function createNewBranch($teamId = null, $type = null)
+    public function createNewBranch($type = null)
     {
-        $newThread = new Thread();
-        $newThread->team_id = $teamId ?: $this->team_id; //In case of cross-team emails like support request..
-        $newThread->union_id = $this->union_id;
+        $newThread = new AppThread();
         $newThread->subject = $this->subject;
         $newThread->type = $type ?: static::TYPE_INTERNAL;
         $newThread->save();
@@ -239,29 +231,27 @@ class Thread extends Model
 
     public function scopeNotAssociatedToAnyBox($query)
     {
-        $emailAccount = auth()->user()->getSenderAccount();
+        $emailAccount = currentMailbox();
 
         if (!$emailAccount) {
-            \Log::warning('BOX: no senderAccount for '.auth()->user()?->getSenderAccountId().' | user id: '.auth()->user()?->id);
+            \Log::warning('BOX: no senderAccount for '.currentMailboxId().' | user id: '.auth()->id());
         }
 
         $query->whereDoesntHave('boxes',
-            fn($q) => $q->where('entity_id', $emailAccount->entity_id)
-                        ->where('entity_type', $emailAccount->entity_type)
+            fn($q) => $q->where('email_account_id', $emailAccount->id)
         );
     }
 
     public function scopeNotInTrashBox($query)
     {
-        $emailAccount = auth()->user()->getSenderAccount();
+        $emailAccount = currentMailbox();
 
         if (!$emailAccount) {
-            \Log::warning('Trash: no senderAccount for '.auth()->user()?->getSenderAccountId().' | user id: '.auth()->user()?->id);
+            \Log::warning('Trash: no senderAccount for '.currentMailboxId().' | user id: '.auth()->id());
         }
 
         $query->whereDoesntHave('boxes',
-            fn($q) => $q->where('entity_id', $emailAccount->entity_id)
-                        ->where('entity_type', $emailAccount->entity_type)
+            fn($q) => $q->where('email_account_id', $emailAccount->id)
                         ->where('box', ThreadBox::BOX_TRASH)
         );
     }

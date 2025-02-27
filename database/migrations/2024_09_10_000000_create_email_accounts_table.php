@@ -17,8 +17,14 @@ class CreateEmailAccountsTable extends Migration
             
             addMetaData($table);
 
-            $table->string('email_adr')->nullable();
+            $table->string('email_adr');
             $table->nullableMorphs('entity');
+            $table->tinyInteger('is_mailbox')->nullable();
+            $table->integer('unread_count')->nullable();
+        });
+
+        Schema::table('users', function (Blueprint $table) {
+            $table->foreignId('current_mailbox_id')->nullable()->constrained('email_accounts');
         });
     }
 
@@ -29,6 +35,11 @@ class CreateEmailAccountsTable extends Migration
      */
     public function down()
     {
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropForeign(['current_mailbox_id']);
+            $table->dropColumn('current_mailbox_id');
+        });
+
         Schema::dropIfExists('email_accounts');
     }
 }

@@ -1,6 +1,6 @@
 <?php 
 
-namespace Condoedge\Messaging\Models\CustomInbox;
+namespace Condoedge\Messaging\Models\CustomInbox\Traits;
 
 use App\Models\Messaging\EmailAccount;
 

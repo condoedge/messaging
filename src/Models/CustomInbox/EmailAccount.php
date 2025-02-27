@@ -2,18 +2,10 @@
 
 namespace Condoedge\Messaging\Models\CustomInbox;
 
-use App\Models\Messaging\MessageForward;
-use App\Models\Model;
-use App\Models\Traits\BelongsToTeam;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Laravel\Jetstream\HasProfilePhoto;
+use Kompo\Auth\Models\Model;
 
 class EmailAccount extends Model
 {
-    use SoftDeletes,
-        BelongsToTeam,
-        HasProfilePhoto;
-
     /* RELATIONS */
     public function entity()
     {
@@ -23,6 +15,11 @@ class EmailAccount extends Model
     public function distributions()
     {
     	return $this->hasMany(Distribution::class);
+    }
+
+    public function signatures()
+    {
+    	return $this->hasMany(Signature::class);
     }
 
     /* ATTRIBUTES */
@@ -39,12 +36,12 @@ class EmailAccount extends Model
     /* CALCULATED FIELDS */
     public function mainEmail()
     {
-    	return trim($this->entity ? $this->entity->mainEmail() : $this->email);
+    	return trim($this->email_adr);
     }
 
     public function relatedEmail()
     {
-    	return $this->is_mailbox ? static::getMailboxEmail($this->email) : ($this->email ?: $this->mainEmail());
+    	return $this->is_mailbox ? getMailboxEmail($this->email) : ($this->email ?: $this->mainEmail());
     }
 
     public function belongsToAuthUser()
@@ -57,76 +54,15 @@ class EmailAccount extends Model
     	return $this->entity ? ($this->name.' ('.$this->relatedEmail().')') : $this->relatedEmail();
     }
 
-    public static function isNotAcceptableMailbox($emailPrefix, $excludeUserId)
+    public function getAutoInsertSignature()
     {
-    	if (strlen($emailPrefix) < 2) {
-    		return true;
-    	}
-
-    	return static::where('is_mailbox', 1)->where('email', $emailPrefix)->where('entity_id', '<>', $excludeUserId)->count();
-    }
-
-    public static function isMailbox($email)
-    {
-    	return strpos($email, static::mailboxHost()) > -1;
-    }
-
-    public static function getMailboxPrefix($email)
-    {
-    	return str_replace(static::mailboxHost(), '', $email);
-    }
-
-    public static function getMailboxEmail($emailPrefix)
-    {
-    	if (!$emailPrefix) {
-    		return;
-    	}
-
-    	return $emailPrefix.(static::mailboxHost());
-    }
-
-    public static function mailboxHost()
-    {
-    	return '@'.config('mailbox.email_incoming_host');
-    }
-
-    public static function getMailboxTeamId($address)
-    {
-    	if (!static::isMailbox($address)) {
-    		return;
-    	}
-
-    	$mailbox = static::getMailboxPrefix($address);
-
-    	return static::where('is_mailbox', 1)->where('email', $mailbox)->value('team_id');
-    }
-
-    /* QUERIES */
-    public static function getUnionsMailboxes()
-    {
-    	return static::whereIn('team_id', userTeamIds())->where('is_mailbox', 1)
-    		->where('entity_type', 'union')->whereIn('entity_id', userUnionIds());
-    }
-
-    public static function getTeammatesMailboxes()
-    {
-    	return static::whereIn('team_id', userTeamIds())->where('is_mailbox', 1)
-    		->where('entity_type', 'user')->whereIn('entity_id', userColleagues()->pluck('id'))
-    		->where('is_impersonatable', 1);
-    }
-
-    //TODO DELETE? Rendered useless by team impersonation
-    public static function getForwardedMailboxes()
-    {
-    	$userIds = MessageForward::currentlyActive()->where('forward_to_id', auth()->id())->pluck('id');
-
-    	return static::where('team_id', currentTeamId())->where('is_mailbox', 1)
-    		->where('entity_type', 'user')->whereIn('entity_id', $userIds);
+    	return $this->signatures()->where('is_auto_insert', 1)->first();
     }
 
     /* ELEMENTS */
     public function getEmailOption()
     {
+    	return $this->email_adr; //TODO change later
         return $this->entity ? $this->entity->getEmailOption() : _EmailHtml($this->mainEmail());
     }
 
@@ -152,94 +88,22 @@ class EmailAccount extends Model
     }
 
     /* ACTIONS */
-	public static function findOrCreate($entityOrEmail, $teamId = null)
+	public static function findFromEmail($email)
 	{
-		if(is_string($entityOrEmail)){
-			return static::where('team_id', $teamId)->where('email', $entityOrEmail)->first() ?:
-				static::createWithoutEntity($entityOrEmail, $teamId);
-		}
-
-		return $entityOrEmail->mainMailbox()->first() ?: (
-			$entityOrEmail->mainEmailAccount($teamId)->first() ?: ( //TODO DELETE AFTER REMOVING THEM FROM DB
-				$entityOrEmail->emailAccount($teamId)->first() ?: 
-					$entityOrEmail->createEmailAccount($teamId)
-			)
-		);
+		return EmailAccount::where('email_adr', $email)->first();
 	}
 
-	public static function findOrCreateFromType($type, $idOrEmail, $teamId = null)
+	public static function createForEmail($email)
 	{
-		if ($type == 'email-account') {
-			return static::find($idOrEmail);
-		}
-
-		if ($emailAccount = static::findFromType($type, $idOrEmail, $teamId) ) {
-			return $emailAccount;
-		}
-
-		if ($type) {
-			$emailAccount = new static();
-			$emailAccount->setTeamId();
-			$emailAccount->entity_type = $type;
-			$emailAccount->entity_id = $idOrEmail;
-			$emailAccount->save();
-
-			return $emailAccount;
-
-		}
-
-        return static::createWithoutEntity($idOrEmail);
-	}
-
-    public static function haveGlobalEmailAccount($type)
-    {
-        return in_array($type, [
-            'user',
-            'union',
-        ]);
-    }
-
-	public static function findFromType($type, $idOrEmail, $teamId = null)
-	{
-		return static::when(!static::haveGlobalEmailAccount($type), 
-                fn($q) => $q->where('team_id', $teamId ?: currentUnion()->team_id)
-            )
-			->where('entity_type', $type)->where('entity_id', $idOrEmail)
-			->orderByDesc('is_main') //this selects mainmailbox first
-			->first();
-	}
-
-	public static function createWithoutEntity($email, $prefilledTeam = null)
-	{
-		$emailAccount = new static();
-
-		if($prefilledTeam){
-			$emailAccount->team_id = $prefilledTeam;
-		}else{
-			$emailAccount->setTeamId();
-		}
-
-		$emailAccount->email = $email;
+		$emailAccount = new EmailAccount();
+		$emailAccount->email_adr = $email;
 		$emailAccount->save();
 
 		return $emailAccount;
 	}
 
-	public static function associateEmailToEntity($email, $entity)
+	public static function findOrCreateFromEmail($email)
 	{
-		$emailAccount = static::findNonEntityEmail($email);
-
-		if (!$emailAccount) {
-			$emailAccount = static::createWithoutEntity(null); //null because it will because primary mail account
-		}
-
-		$emailAccount->entity()->associate($entity);
-
-		$emailAccount->save();
-	}
-
-	public static function findNonEntityEmail($email)
-	{
-		return currentTeam()->emailAccounts()->whereNull('entity_type')->where('email', $email)->first();
+		return EmailAccount::findFromEmail($email) ?: EmailAccount::createForEmail($email);
 	}
 }

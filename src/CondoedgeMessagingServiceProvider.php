@@ -22,6 +22,8 @@ class CondoedgeMessagingServiceProvider extends ServiceProvider
 
         $this->extendRouting(); //otherwise Route::layout doesn't work
 
+        $this->loadViewsFrom(__DIR__.'/../resources/views', 'condoedge-messaging');
+
         $this->loadJSONTranslationsFrom(__DIR__.'/../resources/lang');
 
         $this->loadMigrationsFrom(__DIR__.'/../database/migrations');

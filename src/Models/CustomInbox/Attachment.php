@@ -2,33 +2,43 @@
 
 namespace Condoedge\Messaging\Models\CustomInbox;
 
-use App\Models\File;
-use App\Models\Model;
-use App\Models\Traits\BelongsToTeam;
-use App\Models\Traits\FileActionsKomponents;
-use App\Models\Traits\MorphRelations;
+use App\Models\Messaging\Attachment as AppAttachment;
+use Kompo\Auth\Models\Files\File;
+use Kompo\Auth\Models\Model;
 
 class Attachment extends Model
 {
-    use BelongsToTeam,
-        MorphRelations,
-        FileActionsKomponents;
-
-    public $fileType = 'attachment';
+    use \Condoedge\Messaging\Models\CustomInbox\Traits\BelongsToMessageTrait;
+    use \Kompo\Auth\Models\Files\FileActionsKomponents;
 
     /* RELATIONS */
-    public function message()
-    {
-        return $this->belongsTo(Message::class);
-    }
+
+    /* CALCULATED FIELDS */
 
     /* ACTIONS */
     public function delete()
     {
-        if (\Storage::disk('local')->exists($this->path) && !File::where('path', $this->path)->count()) {
-            \Storage::disk('local')->delete($this->path);
+        if ($this->existsOnStorage() && !File::where('path', $this->storagePath())->count()) {
+            $this->storageDisk()->delete($this->storagePath());
         }
 
         parent::delete();
+    }
+
+    public static function createAttachmentFromFile($message, $name, $mime_type, $path)
+    {
+        $attm = new AppAttachment;
+        $attm->name = $name;
+        $attm->mime_type = $mime_type;
+        $attm->path = $path;
+        $message->attachments()->save($attm);
+
+        return $attm;
+    }
+
+    /* ELEMENTS */
+    public function downloadAction($el)
+    {
+        return $el->href('attm.download', ['id' => $this->id]);
     }
 }

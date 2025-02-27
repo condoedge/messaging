@@ -1,0 +1,101 @@
+.inbox-thread{
+	.thread-subject{
+		@apply font-semibold;
+	}
+	.unreadButton{
+		@apply hidden;
+	}
+	.readButton{
+		@apply flex;
+	}
+	&.read{
+		.thread-subject{
+			@apply font-normal;
+		}
+		.unreadButton{
+			@apply flex;
+		}
+		.readButton{
+			@apply hidden;
+		}
+		@apply bg-gray-100;
+	}
+	&.active-thread{
+		@apply bg-blue-700/[.15];
+	}
+	.inbox-mobile-buttons{
+		display: none;
+	}
+}
+
+.messageCollapsed{
+	@apply cursor-pointer h-20 overflow-hidden;
+	.message-recipients{
+		@apply hidden;
+	}
+	.message-summary{
+		@apply block;
+	}
+	.message-attachments{
+		@apply hidden;
+	}
+}
+
+.recipients-multiselect>.vlInputWrapper .vlTags{
+	@apply max-h-36 overflow-y-auto;
+}
+
+
+#inbox-messages-settings{
+	.vlPanelClose{
+		top: 0.5rem;
+		right: 0.5rem;
+	}
+}
+
+.email-ckeditor{
+	&.vlFocusedField{
+		.ck-editor__editable_inline{
+			min-height: 30vh;
+			transition: all 0.3s ease-in-out;
+		}
+	}
+}
+
+.email-ckeditor-delayed{
+	.ck-editor__editable_inline{
+		transition: all 0.3s ease-in-out;
+		transition-delay: 1s;
+	}
+}
+
+/* Responsive CSS */
+#inbox-view, #outlook-view{
+	.vlFiltersRight{
+		.vlPanelClose{
+			display: none;
+
+		}
+	}
+}
+
+@include media-breakpoint-down(xs) {
+	#inbox-view, #outlook-view{
+		.vlFiltersRight.vlFormPanel{
+	  		display: none;
+	  		&.vlPanelNotEmpty{
+	  			display: block;
+	  		}
+	  		.vlPanelClose{
+				display: block;
+				top: 0.25rem;
+				right: 0.25rem;
+			}
+		}
+	}
+	.inbox-thread{
+		.inbox-message-buttons{
+			display: none !important;
+		}
+	}
+}

@@ -2,21 +2,13 @@
 
 namespace Condoedge\Messaging\Models\CustomInbox;
 
-use App\Mail\CommunicationNotification;
-use App\Mail\CondoedgeTeamNotification;
-use App\Mail\MeetingNoticeMail;
-use App\Mailboxes\ThreadMaker;
-use App\Models\Contact\Contact;
-use App\Models\File;
-use App\Models\Messaging\EmailAccount;
-use App\Models\Messaging\MessageForward;
-use App\Models\Model;
-use App\Models\Review;
-use App\Models\User;
-use App\View\Messaging\RecipientsMultiSelect;
-use App\View\Messaging\ThreadGroupsForm;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Str;
+use App\Models\Messaging\Thread;
+use App\Models\Messaging\Message as AppMessage;
+use App\Models\Messaging\Attachment;
+use Kompo\Auth\Models\Files\File;
+
+use Condoedge\Messaging\Mail\ExternalEmailNotification;
+use Kompo\Auth\Models\Model;
 
 class Message extends Model
 {
@@ -28,7 +20,7 @@ class Message extends Model
     public function save(array $options = [])
     {
         if (!$this->sender_id && !app()->runningInConsole()) {
-            $this->sender_id = auth()->user()->getSenderAccountId();
+            $this->sender_id = currentMailboxId();
         }
 
         if (!$this->summary) {
@@ -44,7 +36,7 @@ class Message extends Model
         }
 
         if (!$this->uuid) {
-            $this->uuid = Str::uuid()->toString();
+            $this->uuid = \Str::uuid()->toString();
         }
 
         $this->addPrefix();
@@ -70,12 +62,12 @@ class Message extends Model
 
     public function message() //if reply or forward
     {
-        return $this->belongsTo(Message::class);
+        return $this->belongsTo(AppMessage::class);
     }
 
     public function messages()
     {
-        return $this->hasMany(Message::class);
+        return $this->hasMany(AppMessage::class);
     }
 
     public function attachments()
@@ -100,33 +92,23 @@ class Message extends Model
 
     public function read()
     {
-        $emailAccount = auth()->user()->getSenderAccount();
-
-    	return $this->hasOne(MessageRead::class)
-            ->where('entity_id', $emailAccount->entity_id)
-            ->where('entity_type', $emailAccount->entity_type);
-    }
-
-    public function review()
-    {
-        return $this->hasOne(Review::class)->withTrashed();
+    	return $this->hasOne(MessageRead::class)->where('email_account_id', currentMailboxId());
     }
 
     /* SCOPES */
-    public function scopeAuthUserAsSender($query, $allMailboxes = false)
+    public function scopeAuthUserIncluded($query)
     {
-        $query->whereIn('sender_id', auth()->user()->getActiveEmailAccountIds($allMailboxes));
+        $query->authUserAsSender()->orWhere(fn($q) => $q->authUserInDistributions());
     }
 
-    public function scopeAuthUserIncluded($query, $allMailboxes = false)
+    public function scopeAuthUserAsSender($query)
     {
-        $query->authUserAsSender($allMailboxes)
-            ->orWhereHas('distributions', fn($q) => $q->authUserAsRecipient($allMailboxes));
+        $query->where('sender_id', currentMailboxId());
     }
 
-    public function scopeAuthUserInDistributions($query, $allMailboxes = false)
+    public function scopeAuthUserInDistributions($query)
     {
-        $query->whereHas('distributions', fn($q) => $q->authUserAsRecipient($allMailboxes));
+        $query->whereHas('distributions', fn($q) => $q->where('email_account_id', currentMailboxId()));
     }
 
     public function scopeIsDraft($query)
@@ -242,7 +224,7 @@ class Message extends Model
 
     public function hasDifferentDistributions($recipientEmailAccountIds, $newSenderId = null)
     {
-        $newSenderId = $newSenderId ?: auth()->user()->getSenderAccountId();
+        $newSenderId = $newSenderId ?: currentMailboxId();
         $newMessageRecipients = $recipientEmailAccountIds->concat([$newSenderId]);
 
         $parentMessageRecipients = $this->recipients->pluck('id')->concat([$this->sender_id]);
@@ -258,60 +240,20 @@ class Message extends Model
 
     public static function transformRecipientsToEmailAccounts($recipients)
     {
-        return collect($recipients)->map(function($p){
-
-            [$type, $idOrEmail] = explode('|', $p);
-
-            return EmailAccount::findOrCreateFromType($type, $idOrEmail);
-
-        });
-    }
-
-    public static function checkInvalidEmailAddresses()
-    {
-        $recipients = Message::getRequestRecipients();
-
-        $invalidEmails = Message::transformRecipientsToEmailAccounts($recipients)
-            ->filter(fn($emailAccount) => !filter_var(trim($emailAccount->mainEmail()), FILTER_VALIDATE_EMAIL))
-            ->map(fn($emailAccount) => $emailAccount->mainEmail());
-
-        if ($invalidEmails->count()) {
-            abort(403, '"'.$invalidEmails->first().'" '.__('is not a valid email address! Please correct it and try again.'));
-        }
-    }
-
-    public static function getRequestRecipients()
-    {
-        if ($group = request('massive_recipients_group')) {
-            $recipients = ThreadGroupsForm::getMatchingRecipients($group);
-            return RecipientsMultiSelect::getValidEmailOptionsFromGroup($recipients, $group);
-        }
-
-        return request('recipients');
+        return collect($recipients)->map(fn($email) => EmailAccount::findOrCreateFromEmail($email));
     }
 
     /* ACTIONS */
-    protected function createDistribution($emailAccount)
+    public function addDistribution($emailAccount)
     {
         $distribution = new Distribution();
         $distribution->emailAccount()->associate($emailAccount);
         $this->distributions()->save($distribution);
     }
 
-    public function addDistribution($emailAccount)
+    public function addDistributionFromEmail($email)
     {
-        if ($emailAccount->entity_type == 'user') {
-            $this->checkIfMessageIsForwarded($emailAccount);
-        }
-
-        $this->createDistribution($emailAccount);
-    }
-
-    public function addDistributionFromType($type, $idOrEmail)
-    {
-        $this->addDistribution(
-            EmailAccount::findOrCreateFromType($type, $idOrEmail)
-        );
+        $this->addDistribution(EmailAccount::findOrCreateFromEmail($email));
     }
 
     public function addParticipantsToReply($replyMessage)
@@ -325,35 +267,12 @@ class Message extends Model
         });
     }
 
-    protected function checkIfMessageIsForwarded($emailAccount)
-    {
-        if ($forward = MessageForward::currentlyActive()->where('user_id', $emailAccount->entity_id)->first()) {
-
-            $message = new static();
-            $message->subject = __('email.out-of-office').': '.$emailAccount->mainEmail();
-            $message->html = $forward->message;
-
-            if ($forward->forward_to_id) {
-
-                $emailAccount = EmailAccount::findOrCreateFromType('user', $forward->forward_to_id, $this->thread->team_id);
-
-                $this->createDistribution($emailAccount);
-
-            }
-
-            if (trim($message->html)) {
-                Mail::to($this->sender->mainEmail())->send(new CondoedgeTeamNotification($message));
-            }
-        }
-    }
-
     public function addLinkedAttachments()
     {
         collect(request('selected_files'))->each(function($fileId){
             $file = File::find($fileId);
-            ThreadMaker::createMessageAttachment(
+            Attachment::createAttachmentFromFile(
                 $this,
-                currentTeam()->id,
                 $file->name,
                 $file->mime_type,
                 $file->path
@@ -378,46 +297,15 @@ class Message extends Model
                         !$entity ? ($url ?: null) : $entity->invitationUrl($this->thread_id, $url)
                     );
 
-                    Mail::to(trim($toEmail))
-                        ->{$action}(new CommunicationNotification($this, $url));
+                    \Mail::to(trim($toEmail))
+                        ->{$action}(new ExternalEmailNotification($this, $url));
                 })
             );
 
-        }else{
-            Mail::to($distributions->map(fn($entity, $toEmail) => $toEmail))
-                ->send(new CommunicationNotification($this, $url));
+        } else {
+            \Mail::to($distributions->map(fn($entity, $toEmail) => $toEmail))
+                ->send(new ExternalEmailNotification($this, $url));
         }
-    }
-
-    public function sendMeetingNotice($meeting)
-    {
-        $distributions = $this->getValidDistributions();
-
-        \DB::transaction(
-            fn() => $distributions->each(function($entity, $toEmail) use ($meeting) {
-
-                $entityName = $entity?->name ?: $toEmail;
-
-                $ownedUnitIds = [];
-
-                if ($entity instanceOf User) {
-                    $ownedUnitIds = $entity->currentContactUnits()->map(fn($cu) => $cu->unit_id);
-                }
-
-                if ($entity instanceOf Contact) {
-                    $ownedUnitIds = $entity->currentContactUnits()->pluck('unit_id');
-                }
-
-                $voterId = $meeting->voters()->where('parent_type', 'unit')->whereIn('parent_id', $ownedUnitIds)->first();
-
-                if (!$voterId) {
-                    \Log::warning('No voter id for entity '.($entity?->id ?: $toEmail).' while sending meeting notice id: '.$meeting->id);
-                }
-
-                Mail::to($toEmail)
-                    ->queue(new MeetingNoticeMail($this, $voterId, $entityName));
-            })
-        );
     }
 
     protected function getValidDistributions()
@@ -434,8 +322,7 @@ class Message extends Model
                 continue;
             }
 
-            if ($emailAccount->is_mailbox && ($emailAccount->team_id == currentTeam()->id)) {
-                //Do not send external mail to same team mailbox...
+            if ($emailAccount->is_mailbox) {
                 continue;
             }
 
@@ -461,14 +348,12 @@ class Message extends Model
         }
 
         $mr = new MessageRead();
-        $mr->setUserId();
         $mr->message_id = $this->id;
         $mr->read_at = now();
-        $emailAccount = auth()->user()->getSenderAccount();
-        $mr->entity_id = $emailAccount->entity_id;
-        $mr->entity_type = $emailAccount->entity_type;
+        $mr->email_account_id = currentMailboxId();
         $mr->save();
 
+        $emailAccount = currentMailbox();
         $emailAccount->unread_count = max(0, $emailAccount->unread_count - 1);
         $emailAccount->save();
     }
@@ -518,14 +403,6 @@ class Message extends Model
     {
         return _CKEditor()->name('html')->prependToolbar(['fontColor', 'fontBackgroundColor', 'imageUpload', 'imageResize'])
             ->class('email-ckeditor mb-0');
-    }
-
-    public static function bccCheckbox($default = 1)
-    {
-        return _Checkbox('messaging.bcc')->name('bcc')->default($default)
-            ->labelClass('whitespace-nowrap text-lg')
-            ->style('transform:scale(0.9);transform-origin:100%;z-index:5')
-            ->hint('messaging.bcc-toggle', 'down-right');
     }
 
     public static function sendDropdown($action = null)
