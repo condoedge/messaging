@@ -54,10 +54,10 @@ class ExternalEmailNotification extends Mailable
         if ($this->url) {
             $html .= view('vendor.mail.html.button', [
                 'url' => $this->url,
-                'slot' => __('mail.view-on-condoedge-portal'),
+                'slot' => __('messaging-view-on-sisc'),
             ])->render();
         }
-        $html .= '<div style="font-size:12px;color:gray;margin:5px 0;text-align:center">'.__('mail.you-can-also-reply-directly').'</div>';
+        $html .= '<div style="font-size:12px;color:gray;margin:5px 0;text-align:center">'.__('messaging-you-can-also-reply-directly').'</div>';
 
         $html .= $this->message->getParentMessageExtraHtml();
 

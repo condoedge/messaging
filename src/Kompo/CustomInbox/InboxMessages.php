@@ -28,7 +28,7 @@ class InboxMessages extends ThreadMessages
         $newThreadKomponent = _FlexEnd(
             _NewEmailBtn()
                 ->href('new.thread')->inNewTab()
-                ->warnBeforeClose('messaging.are-you-sure-you-want-to-close'),
+                ->warnBeforeClose('messaging-are-you-sure-you-want-to-close'),
         )->class('bg-gray-100');
 
         if(!$this->thread)
@@ -57,11 +57,11 @@ class InboxMessages extends ThreadMessages
             _FlexBetween(
                 _Html($this->thread->subject)->class('font-semibold'),
                 $this->thread->is_trashed ?
-                    $this->actionButton('messaging.trash-remove', 'trash')
+                    $this->actionButton('messaging-trash-remove', 'trash')
                         ->selfPost('untrashThread')
                         ->inAlert() :
 
-                    $this->actionButton('messaging.trash-move-to', 'trash')
+                    $this->actionButton('messaging-trash-move-to', 'trash')
                         ->selfPost('trashThread')
                         ->inAlert()
 
@@ -87,13 +87,13 @@ class InboxMessages extends ThreadMessages
     public function trashThread()
     {
         $this->thread->updateBox(2);
-        return __('messaging.thread-trashed');
+        return __('messaging-thread-trashed');
     }
 
     public function untrashThread()
     {
         optional($this->thread->box)->delete();
-        return __('messaging.thread-untrashed');
+        return __('messaging-thread-untrashed');
     }
 
     protected function actionButton($label, $icon)

@@ -63,7 +63,7 @@ function disableThreadSettingsOpen()
 /* ELEMENTS */
 function _NewEmailBtn()
 {
-    return _Link('New')->button()->class('bg-level1')->style('padding:0.5rem 1rem');
+    return _Link('messaging-new')->button()->class('bg-level1')->style('padding:0.5rem 1rem');
 }
 
 function btnFilterClass()

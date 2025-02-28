@@ -35,7 +35,7 @@ class MessageDraftForm extends MessageReplyForm
 
 	protected function getSubjectKomponent()
 	{
-		return $this->model->isDefault() ? _Input()->placeholder('Subject')->name('subject')->class('mt-1 mb-0') : null;
+		return $this->model->isDefault() ? _Input()->placeholder('messaging-subject')->name('subject')->class('mt-1 mb-0') : null;
 	}
 
 	public function afterSave()

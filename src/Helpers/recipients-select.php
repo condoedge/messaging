@@ -5,7 +5,7 @@ use Condoedge\Messaging\Models\CustomInbox\EmailAccount;
 /* ELEMENTS */
 function _RecipientsMultiSelect()
 {
-    return _MultiSelect()->placeholder('messaging.search-recipients')->class('recipients-multiselect mb-2')
+    return _MultiSelect()->placeholder('messaging-search-recipients')->class('recipients-multiselect mb-2')
         ->name('recipients', false)
         ->searchOptions(2, 'searchRecipients', 'retrieveRecipients');
 }
@@ -13,7 +13,7 @@ function _RecipientsMultiSelect()
 function _CcToggle()
 {
     return _Rows(
-        _Link('CC / BCC')->toggleId('cc-bb-recipients')->class('mb-2 text-gray-700 text-xs'),
+        _Link('messaging-cc-bcc')->toggleId('cc-bb-recipients')->class('mb-2 text-gray-700 text-xs'),
         _Rows(
             _CcRecipientsMultiSelect(),
             _BccRecipientsMultiSelect(),
@@ -23,14 +23,14 @@ function _CcToggle()
 
 function _CcRecipientsMultiSelect()
 {
-    return _MultiSelect()->placeholder('cc:')->class('recipients-multiselect mb-2')
+    return _MultiSelect()->placeholder('messaging-cc')->class('recipients-multiselect mb-2')
         ->name('cc_recipients', false)
         ->searchOptions(2, 'searchRecipients', 'retrieveRecipients');
 }
 
 function _BccRecipientsMultiSelect()
 {
-    return _MultiSelect()->placeholder('bcc:')->class('recipients-multiselect mb-4')
+    return _MultiSelect()->placeholder('messaging-bcc')->class('recipients-multiselect mb-4')
         ->name('bcc_recipients', false)
         ->searchOptions(2, 'searchRecipients', 'retrieveRecipients');
 }
@@ -69,7 +69,7 @@ function checkRecipientsAreValid()
     $invalidEmails = collect($emails)->filter(fn($email) => !isValidEmail($email));
 
     if ($invalidEmails->count()) {
-        abort(403, '"'.$invalidEmails->first().'" '.__('is not a valid email address! Please correct it and try again.'));
+        abort(403, '"'.$invalidEmails->first().'" '.__('error-is-not-a-valid-email-address-please-correct-it'));
     }
 }
 

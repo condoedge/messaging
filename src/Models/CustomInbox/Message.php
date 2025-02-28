@@ -196,20 +196,20 @@ class Message extends Model
         $html .= 'Sent: '.$this->created_at.'<br>';
         $html .= $this->recipientsString().'<br>';
         //$html .= __('CC').': '; //TODO CC:....
-        $html .= __('Subject').': '.$this->subject.'<br>';
+        $html .= __('messaging-subject').': '.$this->subject.'<br>';
 
         return $html;
     }
 
     public function senderString()
     {
-        return __('From').': '.$this->sender->getRecipientString();
+        return __('messaging-from').': '.$this->sender->getRecipientString();
     }
 
     public function recipientsString($showBcc = false, $delimiter = '; ')
     {
         if ($this->bcc && !$showBcc) {
-            return __('messaging.bcc-multiple');
+            return __('messaging-bcc-multiple');
         }
 
         return $this->recipientsPrefixString().$this->recipients->map(
@@ -219,7 +219,7 @@ class Message extends Model
 
     public function recipientsPrefixString()
     {
-        return __($this->bcc ? 'messaging.BCC' : 'To').': ';
+        return __($this->bcc ? 'messaging-BCC' : 'messaging-to').': ';
     }
 
     public function hasDifferentDistributions($recipientEmailAccountIds, $newSenderId = null)
@@ -407,17 +407,17 @@ class Message extends Model
 
     public static function sendDropdown($action = null)
     {
-        $button = _SubmitButton('Send');
+        $button = _SubmitButton('messgaging-send');
 
         return $action ? $action($button) : $button;
     }
 
     public static function draftButton($action = null)
     {
-        $link = _Link()->icon(_Sax('document-text'))->balloon('mail.save-as-draft', 'up')
+        $link = _Link()->icon(_Sax('document-text'))->balloon('mail-save-as-draft', 'up')
             ->submitWith([
                 'is_draft' => 1,
-            ])->alert('messaging.draft-saved');
+            ])->alert('messaging-draft-saved');
 
         return $action ? $action($link) : $link;
     }
