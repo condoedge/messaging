@@ -63,6 +63,12 @@ function disableThreadSettingsOpen()
     return \Cache::forget('thread-settings-open-'.auth()->id());
 }
 
+/* CALCULATED FIELDS */
+function displayMailHtmlInIframe($content)
+{
+    return '<iframe style="width:100%" frameborder="0" scrolling="no" onload="handleIframe(this)" srcdoc="'.str_replace('"', '&#34;', $content).'"></iframe>';
+}
+
 /* ACTIONS */
 
 /* ELEMENTS */
