@@ -30,7 +30,7 @@ class CatchIncomingEmails
                 abort(200, __('Skipped - Duplicate or Too big'));
             }
 
-            $inboundEmail = OurInboundEmail::create([
+            $inboundEmail = InboundEmail::create([
                 //'message' => 'Saving...',
                 'message' => $email->message, //temp switch again
             ]);
