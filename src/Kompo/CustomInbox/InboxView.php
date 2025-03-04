@@ -271,7 +271,7 @@ class InboxView extends Query
     public function searchInboxes()
     {
         return auth()->user()->impersonatableMailboxes()->mapWithKeys(fn($mailbox) => [
-            $mailbox->id => $mailbox->getUnreadPillHtml().$mailbox->relatedEmail(),
+            $mailbox->id => $mailbox->getUnreadPillHtml().$mailbox->mainEmail(),
         ]);
     }
 
@@ -285,7 +285,7 @@ class InboxView extends Query
         $mailbox = EmailAccount::where('id', $mailboxId)->firstOrFail();
 
         return [
-            $mailbox->id => _Html($mailbox->getUnreadPillHtml().$mailbox->relatedEmail())->searchableBy($mailbox->relatedEmail()),
+            $mailbox->id => _Html($mailbox->getUnreadPillHtml().$mailbox->mainEmail())->searchableBy($mailbox->mainEmail()),
         ];
     }
 

@@ -39,11 +39,6 @@ class EmailAccount extends Model
     	return trim($this->email_adr);
     }
 
-    public function relatedEmail()
-    {
-    	return $this->is_mailbox ? getMailboxEmail($this->email) : ($this->email ?: $this->mainEmail());
-    }
-
     public function belongsToAuthUser()
     {
     	return ($this->entity_type == 'user') && ($this->entity_id == auth()->user()->id);
@@ -51,7 +46,7 @@ class EmailAccount extends Model
 
     public function getRecipientString()
     {
-    	return $this->entity ? ($this->name.' ('.$this->relatedEmail().')') : $this->relatedEmail();
+    	return $this->entity ? ($this->name.' ('.$this->mainEmail().')') : $this->mainEmail();
     }
 
     public function getAutoInsertSignature()
