@@ -74,11 +74,7 @@ class MessageReplyForm extends Form
 
 	public function afterSave()
 	{
-		collect(getRequestRecipients())->each(function($email){
-
-			$this->model->addDistributionFromEmail($email);
-
-		});
+		$this->model->addAllDistributionsFromRequest();
 	}
 
 	public function completed()

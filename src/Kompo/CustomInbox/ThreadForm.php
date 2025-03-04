@@ -63,19 +63,11 @@ class ThreadForm extends Form
 
 	public function afterSave()
 	{
-		$this->addDistributions();
-	}
-
-	protected function addDistributions()
-	{
 		if($this->threadId) {
 			$this->thread->lastMessage->addParticipantsToReply($this->model);
 		}else{
-			collect(getRequestRecipients())->each(function($email){
 
-				$this->model->addDistributionFromEmail($email);
-
-			});
+			$this->model->addAllDistributionsFromRequest();
 		}
 	}
 

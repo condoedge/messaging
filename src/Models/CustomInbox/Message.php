@@ -242,16 +242,29 @@ class Message extends Model
     }
 
     /* ACTIONS */
-    public function addDistribution($emailAccount)
+    public function addDistribution($emailAccount, $type = null)
     {
         $distribution = new Distribution();
+        $distribution->type_recip = $type ?: Distribution::TYPE_RECIP_TO;
         $distribution->emailAccount()->associate($emailAccount);
         $this->distributions()->save($distribution);
     }
 
-    public function addDistributionFromEmail($email)
+    public function addDistributionFromEmail($email, $type = null)
     {
-        $this->addDistribution(EmailAccount::findOrCreateFromEmail($email));
+        $this->addDistribution(EmailAccount::findOrCreateFromEmail($email), $type);
+    }
+
+    public function addEmailsAsDistributions($emails, $type = null)
+    {
+        collect($emails)->each(fn($email) => $this->addDistributionFromEmail($email, $type));
+    }
+
+    public function addAllDistributionsFromRequest()
+    {
+        $this->addEmailsAsDistributions(getRequestRecipients());
+        $this->addEmailsAsDistributions(getCcRecipients(), Distribution::TYPE_RECIP_CC);
+        $this->addEmailsAsDistributions(getBCcRecipients(), Distribution::TYPE_RECIP_BCC);
     }
 
     public function addParticipantsToReply($replyMessage)
@@ -282,61 +295,29 @@ class Message extends Model
 
     public function sendExternalEmail($url = null)
     {
-        $distributions = $this->getValidDistributions();
+        $toEmails = $this->getEmailFromDistributions('forTo');
+        $ccEmails = $this->getEmailFromDistributions('forCc');
+        $bccEmails = $this->getEmailFromDistributions('forBcc');
 
-        if ($this->bcc) {
-
-            $action = ($distributions->count() >= 3) ? 'queue' : 'send';
-
-            \DB::transaction(
-                fn() => $distributions->each(function($entity, $toEmail) use ($url, $action) {
-
-                    $url = $url === false ? null : (
-                        !$entity ? ($url ?: null) : $entity->invitationUrl($this->thread_id, $url)
-                    );
-
-                    \Mail::to(trim($toEmail))
-                        ->{$action}(new ExternalEmailNotification($this, $url));
-                })
-            );
-
-        } else {
-            \Mail::to($distributions->map(fn($entity, $toEmail) => $toEmail))
-                ->send(new ExternalEmailNotification($this, $url));
+        if ($toEmails->count() + $ccEmails->count() + $bccEmails->count() == 0) {
+            return; //Just internal
         }
+
+        $action = 'send';
+
+        if ($toEmails->count() + $ccEmails->count() + $bccEmails->count() > 3) {
+            $action = 'queue';
+        }
+
+        \Mail::to($toEmails)->cc($ccEmails)->bcc($bccEmails)
+            ->send(new ExternalEmailNotification($this, $url));
     }
 
-    protected function getValidDistributions()
+    protected function getEmailFromDistributions($distributionScope)
     {
-        $emailsAndEntities = [];
-
-        foreach ($this->distributions()->with('emailAccount.entity')->get() as $distribution) {
-            
-            $emailAccount = $distribution->emailAccount;
-            $entity = $emailAccount->entity;
-            $toEmail = trim($emailAccount->mainEmail());
-
-            if (!$toEmail || $emailAccount->belongsToAuthUser()) {
-                continue;
-            }
-
-            if ($emailAccount->is_mailbox) {
-                continue;
-            }
-
-            if ($entity instanceOf \App\Models\Contact\Contact) {
-                $emails = $entity->emails()->where('send_to_or_not', 1)->get();
-                foreach ($emails as $email) {
-                    $emailsAndEntities[trim($email->value)] = $entity;
-                }
-            } else {
-
-                $emailsAndEntities[$toEmail] = $entity;
-
-            }
-        }
-
-        return collect($emailsAndEntities);
+        return $this->distributions()->with('emailAccount')->{$distributionScope}()->get()
+                    ->filter(fn($d) => $d->emailAccount->shouldSendExternally())
+                    ->map(fn($d) => $d->emailAccount->mainEmail());
     }
 
     public function markRead()

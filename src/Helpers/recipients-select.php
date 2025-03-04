@@ -88,3 +88,13 @@ function getRequestRecipients()
 
     return request('recipients');
 }
+
+function getCcRecipients()
+{
+    return request('cc_recipients');
+}
+
+function getBccRecipients()
+{
+    return request('bcc_recipients');
+}

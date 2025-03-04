@@ -65,6 +65,15 @@ class EmailAccount extends Model
         return collect($emails)->map(fn($email) => static::findOrCreateFromEmail($email));
     }
 
+    public function shouldSendExternally()
+    {
+        if (!$this->mainEmail() || $this->belongsToAuthUser() || $this->is_mailbox) {
+            return false;
+        }
+
+        return true;
+    }
+
     /* ELEMENTS */
     public function getEmailOption()
     {
