@@ -34,6 +34,11 @@ class EmailAccount extends Model
 		return $this->entity ? $this->entity->profile_photo_url : $this->defaultProfilePhotoUrl();
 	}
 
+    protected function defaultProfilePhotoUrl()
+    {
+        return 'https://ui-avatars.com/api/?name='.urlencode($this->mainEmail()).'&color=7F9CF5&background=EBF4FF';
+    }
+
 	public function getNameAttribute()
 	{
 		return $this->entity ? ($this->entity->email_display ?: $this->entity->name) : $this->email;
