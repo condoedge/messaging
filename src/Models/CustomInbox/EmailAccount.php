@@ -22,6 +22,12 @@ class EmailAccount extends Model
     	return $this->hasMany(Signature::class);
     }
 
+    /* SCOPES */
+    public function scopeOnlyMailboxes($query)
+    {
+        $query->where('is_mailbox', 1);
+    }
+
     /* ATTRIBUTES */
 	public function getProfileImgUrlAttribute()
 	{

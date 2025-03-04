@@ -17,16 +17,21 @@ trait MorphManyEmailAccountTrait
         return $this->morphOne(EmailAccount::class, 'entity');
     }
 
-    public function getEntityEmailAccount()
+    public function mailbox()
     {
-        $emailAccount = $this->emailAccount()->first();
+        return $this->emailAccount()->onlyMailboxes();
+    }
 
-        if (!$emailAccount) {
+    public function getEntityMailbox()
+    {
+        $mailbox = $this->mailbox()->first();
+
+        if (!$mailbox) {
             $this->setupUserMailbox();
-            $emailAccount = $this->emailAccount()->first();
+            $mailbox = $this->mailbox()->first();
         }
 
-        return $emailAccount;
+        return $mailbox;
     }
 
     /* CALCULATED FIELDS */
@@ -38,27 +43,28 @@ trait MorphManyEmailAccountTrait
     /* ACTIONS */
     public function setupUserMailbox()
     {
-        $emailPrefix = \Str::before($this->email, '@');
+        $emailPrefix = \Str::before($this->mainEmail(), '@');
         $i = 0;
         while (!$this->createOrUpdateMailbox($emailPrefix)) {
+            dd($emailPrefix);
             $i ++;
-            $emailPrefix = \Str::before($this->email, '@').$i;
+            $emailPrefix = \Str::before($this->mainEmail(), '@').$i;
         }
     }
 
     public function createOrUpdateMailbox($emailPrefix)
     {
-        if ($this->isAcceptableMailbox($emailPrefix)) {
+        if (!$this->isAcceptableMailbox($emailPrefix)) {
             return false;
         }
 
-        if ($mailbox = $this->getEntityEmailAccount()) {
+        if ($mailbox = $this->mailbox()->first()) {
             $mailbox->email_adr = getMailboxEmail($emailPrefix);
             $mailbox->save();
             return $mailbox;
         }
 
-        return $this->createEmailAccount($emailPrefix, 1);
+        return $this->createEmailAccount(getMailboxEmail($emailPrefix), 1);
     }
 
     public function createEmailAccount($email = null, $isMailbox = null)
@@ -80,12 +86,12 @@ trait MorphManyEmailAccountTrait
 
         $fullEmail = getMailboxEmail($emailPrefix);
 
-        return EmailAccount::where('email_adr', $fullEmail)->where('is_mailbox', 1)->where('entity_id', '<>', $this->id)->count();
+        return !EmailAccount::where('email_adr', $fullEmail)->where('is_mailbox', 1)->where('entity_id', '<>', $this->id)->count();
     }
 
     public function checkCanImpersonateMailbox($mailboxId)
     {
-        if (($this->getEntityEmailAccount()->id != $mailboxId) && !$this->impersonatableMailboxes()->pluck('id')->contains($mailboxId)) {
+        if (($this->getEntityMailbox()->id != $mailboxId) && !$this->impersonatableMailboxes()->pluck('id')->contains($mailboxId)) {
             return false;
         }
 

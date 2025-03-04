@@ -12,7 +12,7 @@ function currentMailboxId()
         return $emailAccountId;
     }
 
-    $emailAccount = auth()->user()->getEntityEmailAccount();
+    $emailAccount = auth()->user()->getEntityMailbox();
     return $emailAccount->id;
 }
 
@@ -23,7 +23,7 @@ function currentMailbox()
 
 function getMailboxEmail($emailPrefix)
 {
-    return $emailPrefix.(getMailboxHost());
+    return $emailPrefix.getMailboxHost();
 }
 
 function getMailboxHost()
