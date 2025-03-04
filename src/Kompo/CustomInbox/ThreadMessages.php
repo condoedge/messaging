@@ -9,7 +9,7 @@ class ThreadMessages extends Query
 {
     use \Kompo\Komponents\Traits\ScrollToOnLoadTrait;
 
-    public $noItemsFound = 'messaging.no-messages';
+    public $noItemsFound = 'messaging-no-messages';
 
     public $itemsWrapperClass = 'overflow-y-auto mini-scroll';
 
@@ -70,13 +70,13 @@ class ThreadMessages extends Query
                 _Flex(
                     _Rows(
                         _ProfileImg($message->sender, 'h-6 w-6')?->style('margin-top:2px'),
-                        $messageRead ? null : _Html('New')->class('text-xs text-danger'),
+                        $messageRead ? null : _Html('messaging-new')->class('text-xs text-danger'),
                     )->class('shrink-0'),
                     _Rows(
                         _FlexBetween(
                             $message->is_draft ?
 
-                                _Html('Draft')->class('text-sm font-semibold text-danger') :
+                                _Html('messaging-draft')->class('text-sm font-semibold text-danger') :
 
                                 _Flex(
                                     _Flex(
@@ -143,7 +143,7 @@ class ThreadMessages extends Query
 
     protected function messageActions($message)
     {
-        $printBtn = $this->dropdownActionLink('Print')->icon(_Sax('printer',20))
+        $printBtn = $this->dropdownActionLink('messaging-print')->icon(_Sax('printer',20))
             ->href('message-print', ['id' => $message->id])
             ->inNewTab();
 
@@ -154,23 +154,23 @@ class ThreadMessages extends Query
         return $message->is_draft ?
 
             _FlexEnd(
-                $this->messageActionLink('Edit')->icon('document-text')
+                $this->messageActionLink('messaging-edit')->icon('document-text')
                     ->get('message-draft.form', ['id' => $message->id])
                     ->inPanel($this->messageFormPanelId)
             ) :
 
             _FlexEnd(
-                $this->messageActionLink('Reply')->icon('reply')
+                $this->messageActionLink('messaging-reply')->icon('reply')
                     ->get('message-reply.form', ['parent_id' => $message->id])
                     ->outlined()
                     ->inPanel($this->messageFormPanelId),
                 _Dropdown()->icon(_Svg('dots-vertical')->class('text-xl text-gray-700'))
                     ->submenu(
-                        $this->dropdownActionLink('Forward')->icon(_Sax('sms-tracking',20))
+                        $this->dropdownActionLink('messaging-forward')->icon(_Sax('sms-tracking',20))
                             ->get('message-forward.form', ['parent_id' => $message->id])
                             ->inPanel($this->messageFormPanelId)
                             ->class('!pt-6'),
-                        $this->dropdownActionLink('mail.reply-all')->icon(_Sax('sms-edit',20))
+                        $this->dropdownActionLink('messaging-reply-all')->icon(_Sax('sms-edit',20))
                             ->get('message-reply-all.form', ['parent_id' => $message->id])
                             ->inPanel($this->messageFormPanelId),
                         _Rows(

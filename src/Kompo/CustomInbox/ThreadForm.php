@@ -117,7 +117,7 @@ class ThreadForm extends Form
 		[$attachmentsLink, $attachmentsBox] = _FileUploadLinkAndBox('attachments');
 
 		return _Rows(
-			_PageTitle($this->thread?->subject ?: 'messaging.create-communication')
+			_PageTitle($this->thread?->subject ?: 'messaging-create-communication')
 				->icon('annotation'),
 			_Columns(
 				_Rows(
@@ -133,7 +133,7 @@ class ThreadForm extends Form
 
 							    _CcToggle(),
 
-						        _Button('messaging.send-to-group')
+						        _Button('messaging-send-to-group')
 						        	->class('justify-center text-sm vlBtn')
 						        	->get('thread-groups')
 						        	->inModal(),
@@ -170,17 +170,17 @@ class ThreadForm extends Form
 
 	protected function messageTitle()
 	{
-		return _MiniTitle('Message')->class('pt-4 px-4');
+		return _MiniTitle('messaging-message')->class('pt-4 px-4');
 	}
 
 	protected function sendMessageButton()
 	{
-		return Message::sendDropdown()->alert('message-sent')->closeSlidingPanel();
+		return Message::sendDropdown()->alert('messaging-message-sent')->closeSlidingPanel();
 	}
 
 	protected function subjectInput()
 	{
-		return _Input()->placeholder('Subject')->name('subject');
+		return _Input()->placeholder('messaging-subject')->name('subject');
 	}
 
 	protected function threadHistory()

@@ -18,14 +18,14 @@ function _FileUploadLinkAndBox($name, $toggleOnLoad = true, $fileIds = [])
 
         _Rows(
             _FlexBetween(
-                _MultiFile()->placeholder('browse-files')->name($name)->class('mb-0 w-full md:w-5/12')
+                _MultiFile()->placeholder('messaging-browse-files')->name($name)->class('mb-0 w-full md:w-5/12')
                     ->id('email-attachments-input')->run('calculateTotalFileSize'),
-                _Html('or')
+                _Html('messaging-or')
                     ->class('text-sm text-gray-700 my-2 md:my-0'),
                 \Kompo\Auth\Files\FileLibraryAttachmentQuery::libraryFilesPanel($fileIds)
                     ->class('w-full md:w-5/12'),
             )->class('flex-wrap'),
-            _Html('file.your-files-exceed-max-size')
+            _Html('messaging-your-files-exceed-max-size')
                 ->class('hidden text-danger text-xs')->id('file-size-message')
         )->class('mx-2 dashboard-card p-2 space-x-2')
         ->id($panelId)

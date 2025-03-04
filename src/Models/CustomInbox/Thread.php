@@ -85,12 +85,12 @@ class Thread extends Model
     public static function flagLabels()
     {
         return [
-            //Thread::FLAG_NONE => __('messaging.no-status'),
-            AppThread::FLAG_SORT => __('messaging.to-sort'),
-            AppThread::FLAG_WAIT => __('messaging.waiting'),
-            AppThread::FLAG_REPLY => __('messaging.to-reply'),
-            AppThread::FLAG_5 => __('messaging.to-reply'),
-            AppThread::FLAG_6 => __('messaging.to-reply'),
+            //Thread::FLAG_NONE => __('messaging-no-status'),
+            AppThread::FLAG_SORT => __('messaging-to-sort'),
+            AppThread::FLAG_WAIT => __('messaging-waiting'),
+            AppThread::FLAG_REPLY => __('messaging-to-reply'),
+            AppThread::FLAG_5 => __('messaging-to-reply'),
+            AppThread::FLAG_6 => __('messaging-to-reply'),
         ];
     }
 
@@ -98,7 +98,7 @@ class Thread extends Model
     {
         return [
             AppThread::FLAG_NONE => 'bg-gray-100',
-            AppThread::FLAG_SORT => 'bg-level2',
+            AppThread::FLAG_SORT => 'bg-infodark',
             AppThread::FLAG_WAIT => 'bg-warning',
             AppThread::FLAG_REPLY => 'bg-info',
             AppThread::FLAG_5 => 'bg-positive',

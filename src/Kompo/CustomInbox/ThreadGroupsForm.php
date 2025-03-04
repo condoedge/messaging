@@ -10,7 +10,7 @@ use Kompo\Modal;
 
 class ThreadGroupsForm extends Modal
 {
-	protected $_Title = 'messaging.select-group';
+	protected $_Title = 'messaging-select-group';
 	protected $_Icon = 'user-group';
 
 	public $class = 'max-w-2xl overflow-y-auto mini-scroll';
@@ -22,14 +22,14 @@ class ThreadGroupsForm extends Modal
 			_Columns(
 				_Div(
 					$this->mainSelectEl(),
-					_Html('send-to')->class('vlFormLabel'),
+					_Html('messaging-send-to')->class('vlFormLabel'),
 					_Panel(
 						$this->secondaryButtonGroupEl(),
 					)->id('secondary-button-group-panel')
 				)->col('col-sm-6'),
 				_Div(
 					_Panel(
-						_Dashedbox('messaging.matching-recipients-show')->class('px-4')
+						_Dashedbox('messaging-matching-recipients-show')->class('px-4')
 					)->id('group-recipients')
 				)->col('col-sm-6'),
 			)
@@ -67,7 +67,7 @@ class ThreadGroupsForm extends Modal
 		);
 
 		return _Rows(
-            !$group ? null : _Button('Confirm')->class('my-4')
+            !$group ? null : _Button('messaging-confirm')->class('my-4')
 				->selfGet('getRecipientsMultiselect', [
 					'group' => $group,
 				])
@@ -76,7 +76,7 @@ class ThreadGroupsForm extends Modal
 			$recipientRows->class('overflow-y-auto mini-scroll')
 			->style('max-height:400px'),
 
-			_Html('validation.you-may-still-remove-recipient')
+			_Html('validation-you-may-still-remove-recipient')
 				->icon('icon-question-circle')
 				->class('text-gray-700 text-xs text-center mt-2')
 		);

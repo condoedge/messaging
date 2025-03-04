@@ -45,7 +45,7 @@ class InboxAttachments extends Query
             \Log::critical('Thumbnail error for attachment '.$attachment->id);
             
             $thumbnail = _Rows(
-                _Html('Thumbnail Error')->class('font-bold'),
+                _Html('error-thumbnail-error')->class('font-bold'),
                 _Html($attachment->name),
             )->class('text-xs p-2 border border-gray-100 text-center rounded-2xl');
         }

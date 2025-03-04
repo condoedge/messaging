@@ -24,17 +24,17 @@ class ThreadSettingsForm extends Form
 				->closePanel()
 				->post('disableThreadSettingsOpen'),
 			_Rows(
-	        	_MiniTitle('quick-actions')->class('mb-2'),
+	        	_MiniTitle('messaging-quick-actions')->class('mb-2'),
 				_Columns(
 					$this->model->isArchived ?
 
-						$this->actionButton('messaging.archive-remove', 'archive-1', true)
+						$this->actionButton('messaging-archive-remove', 'archive-1', true)
 							->selfPost('unarchiveThread')
 							->inAlert()
 							->refresh()
                             ->class('card-level4 text-level1') :
 
-						$this->actionButton('messaging.archive', 'archive-1', true)
+						$this->actionButton('messaging-archive-action', 'archive-1', true)
 							->selfPost('archiveThread')
 							->inAlert()
 							->refresh()
@@ -42,17 +42,17 @@ class ThreadSettingsForm extends Form
 
 					$this->model->isTrashed ?
 
-						$this->actionButton('messaging.trash-remove', 'trash', true)
+						$this->actionButton('messaging-trash-remove', 'trash', true)
 							->selfPost('untrashThread')
 							->inAlert()
                             ->class('card-level4 text-level1') :
 
-						$this->actionButton('messaging.trash-move-to', 'trash', true)
+						$this->actionButton('messaging-trash-move-to', 'trash', true)
 							->selfPost('trashThread')
 							->inAlert()
                             ->class('card-level4 text-level1'),
 
-					$this->actionButton('messaging.create-task', 'clipboard-tick')
+					$this->actionButton('messaging-create-task', 'clipboard-tick')
 						->selfGet('createTask')->inDrawer()->class('card-level4 text-level1'),
 
 					/* TO DELETE
@@ -64,7 +64,7 @@ class ThreadSettingsForm extends Form
 				),
 			)->class('px-4 p-4'),
 			_Rows(
-				_MiniTitle('Attachments')->class('mb-2'),
+				_MiniTitle('messaging-attachments')->class('mb-2'),
 				new InboxAttachments([
 					'thread_id' => $this->model->id,
 				])
@@ -87,24 +87,24 @@ class ThreadSettingsForm extends Form
     public function archiveThread()
     {
         $this->model->updateBox(ThreadBox::BOX_ARCHIVE);
-        return __('messaging.thread-archived');
+        return __('messaging-thread-archived');
     }
 
     public function trashThread()
     {
         $this->model->updateBox(ThreadBox::BOX_TRASH);
-        return __('messaging.thread-trashed');
+        return __('messaging-thread-trashed');
     }
 
     public function unarchiveThread()
     {
         optional($this->model->box)->delete();
-        return __('messaging.thread-unarchived');
+        return __('messaging-thread-unarchived');
     }
 
     public function untrashThread()
     {
         optional($this->model->box)->delete();
-        return __('messaging.thread-untrashed');
+        return __('messaging-thread-untrashed');
     }
 }

@@ -123,7 +123,7 @@ class MessageReplyForm extends Form
 				    _CcToggle(),
 		        )->id('new-thread-recipients'),
 		        _FlexBetween(
-			        _Link('messaging.send-to-group')
+			        _Link('messaging-send-to-group')
 			        	->icon('user-group')
 			        	->class('text-sm text-level3 justify-end')
 			        	->get('thread-groups')
@@ -136,7 +136,7 @@ class MessageReplyForm extends Form
 				_Rows(
 					_Panel(
 					    Message::editor()
-					    	->insertCustomText('messaging.insert-previous-message', $this->parentMessage?->getHtmlToAppend())
+					    	->insertCustomText('messaging-insert-previous-message', $this->parentMessage?->getHtmlToAppend())
 		        			->focusOnLoad(),
 			        )->id($this->editorPanelId)
 				    ->class('email-ckeditor-delayed'),

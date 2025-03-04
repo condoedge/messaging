@@ -9,7 +9,7 @@ use Kompo\Query;
 class InboxView extends Query
 {
     public $perPage = 40;
-    public $noItemsFound = 'messaging.no-communications';
+    public $noItemsFound = 'messaging-no-communications';
 
     public $id = 'inbox-view'; //also used in js()
     protected $moreInboxFilters = 'more-inbox-filters'; //also used in js()
@@ -136,11 +136,11 @@ class InboxView extends Query
                 _ButtonGroup()
                     ->name('filters', false)
                     ->options([
-                        1 => $this->iconFilter('direct-inbox', 'Inbox'),
-                        2 => $this->iconFilter('sms-tracking', 'sent-items'),
-                        3 => $this->iconFilter('archive-1', 'Archive'),
-                        4 => $this->iconFilter('trash', 'Trash'),
-                        5 => $this->iconFilter('document-text', 'Draft', 'down-right'),
+                        1 => $this->iconFilter('direct-inbox', 'messaging-inbox'),
+                        2 => $this->iconFilter('sms-tracking', 'messaging-sent-items'),
+                        3 => $this->iconFilter('archive-1', 'messaging-archive'),
+                        4 => $this->iconFilter('trash', 'messaging-trash'),
+                        5 => $this->iconFilter('document-text', 'messaging-draft', 'down-right'),
                     ])
                     ->default(1)
                     ->filter()
@@ -156,20 +156,20 @@ class InboxView extends Query
                         ->toggleClass('bg-info text-level1')
                         ->toggleId($this->moreInboxFilters)
                         ->run('focusSearchOnToggle'),
-                    $this->htmlFieldFilter('Unread', 'lastMessage.read', 'sms')
+                    $this->htmlFieldFilter('messaging-unread', 'lastMessage.read', 'sms')
                         ->selectedValue(1)
                         ->filter('NULL'),
-                    $this->htmlFieldFilter('with-attachments', 'messages.attachments', 'paperclip-2')
+                    $this->htmlFieldFilter('messaging-with-attachments', 'messages.attachments', 'paperclip-2')
                         ->selectedValue(1)
                         ->filter('>='),
-                    $this->htmlFieldFilter('current-union', 'current_union_id', 'building-4', false)
+                    $this->htmlFieldFilter('messaging-current-team', 'current_union_id', 'building-4', false)
                         ->selectedValue(1)
                         ->filter(),
                 )->class('py-2'),
                 Thread::flagLinkGroup()->class('py-2')->filter(),
             )->class('px-4 flex-wrap')->alignCenter(),
             _Rows(
-                _Input('search-messages')->placeholder('messaging.min3-characters')->type('search')
+                _Input('messaging-search-messages')->placeholder('messaging-min3-characters')->type('search')
                     ->name('content', false)
                     ->filter()->class('mb-0'),
                 _TagsMultiSelect()->filter(),
@@ -292,7 +292,7 @@ class InboxView extends Query
     public function impersonateMailbox($mailboxId)
     {
         if (!auth()->user()->checkCanImpersonateMailbox($mailboxId)) {
-            abort(403, __('error.you-cannot-impersonate-this-mailbox'));
+            abort(403, __('error-you-cannot-impersonate-this-mailbox'));
         }
 
         if ($mailboxId == auth()->user()->mainMailbox()->value('id')) {
@@ -336,14 +336,14 @@ class InboxView extends Query
 
     protected function unreadButton($thread, $mobile = true)
     {
-        $link = $this->readUnreadButton('messaging.mark-unread', 'sms', 'unreadThread', $thread)->class('unreadButton');
+        $link = $this->readUnreadButton('messaging-mark-unread', 'sms', 'unreadThread', $thread)->class('unreadButton');
 
         return $mobile ? $link->class($this->mobileButtonClass) : $link;
     }
 
     protected function readButton($thread, $mobile = true)
     {
-        $link = $this->readUnreadButton('messaging.mark-read', 'directbox-notif', 'readThread', $thread)->class('readButton');
+        $link = $this->readUnreadButton('messaging-mark-read', 'directbox-notif', 'readThread', $thread)->class('readButton');
 
         return $mobile ? $link->class($this->mobileButtonClass) : $link;
     }
@@ -419,7 +419,7 @@ class InboxView extends Query
 
         $lastMessage?->markUnread();
 
-        return __('messaging.marked-unread');
+        return __('messaging-marked-unread');
     }
 
     public function readThread($id)
@@ -428,7 +428,7 @@ class InboxView extends Query
 
         $lastMessage?->markRead();
 
-        return __('messaging.marked-read');
+        return __('messaging-marked-read');
     }
 
     public function changeThreadFlagColor()
