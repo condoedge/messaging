@@ -2,14 +2,15 @@
 
 namespace Condoedge\Messaging\IncomingEmail;
 
-use BeyondCode\Mailbox\Facades\Mailbox;
-use App\Models\Messaging\Thread;
-use App\Models\Messaging\Message;
-use App\Models\Messaging\EmailAccount;
+use App\Models\Files\File;
 use App\Models\Messaging\Attachment;
+use App\Models\Messaging\EmailAccount;
+use App\Models\Messaging\Message;
+use App\Models\Messaging\Thread;
+use BeyondCode\Mailbox\Facades\Mailbox;
+use Condoedge\Messaging\Models\Incoming\InboundEmail;
 use Illuminate\Http\UploadedFile;
 use Kompo\Core\FileHandler;
-use App\Models\Files\File;
 
 class CatchIncomingEmails
 {
