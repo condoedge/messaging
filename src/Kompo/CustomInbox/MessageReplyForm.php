@@ -54,12 +54,9 @@ class MessageReplyForm extends Form
 
 		$currentThread = $this->thread;
 
-		if ($this->parentMessage && $this->parentMessage->hasDifferentDistributions(
-			Message::transformRecipientsToEmailAccounts(getRequestRecipients())->pluck('id')
-		)) {
+		if ($this->parentMessage && $this->parentMessage->hasDifferentDistributions(getRequestRecipients())) {
 			$currentThread = $currentThread->createNewBranch();
 		}
-
 
 		$this->model->thread_id = $currentThread->id;
 		$this->model->subject = $this->getSubject();

@@ -14,7 +14,8 @@
         "kompo/kompo": "^3.0",
         "google/apiclient": "^2.15.0",
         "league/oauth2-client": "^2.6",
-        "microsoft/microsoft-graph": "^1.73"
+        "microsoft/microsoft-graph": "^1.73",
+        "beyondcode/laravel-mailbox": "^4.0"
     },
     "extra": {
         "laravel": {

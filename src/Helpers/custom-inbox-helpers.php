@@ -31,6 +31,11 @@ function getMailboxHost()
     return '@'.config('condoedge-messaging.email_incoming_host');
 }
 
+function isMailbox($email)
+{
+    return strpos($email, getMailboxHost()) > -1;
+}
+
 function threadSettingsOpen()
 {
     if (!auth()->id()) {

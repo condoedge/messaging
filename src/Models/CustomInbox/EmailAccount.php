@@ -59,6 +59,11 @@ class EmailAccount extends Model
     	return $this->signatures()->where('is_auto_insert', 1)->first();
     }
 
+    public static function transformRecipientsToEmailAccounts($emails)
+    {
+        return collect($emails)->map(fn($email) => static::findOrCreateFromEmail($email));
+    }
+
     /* ELEMENTS */
     public function getEmailOption()
     {

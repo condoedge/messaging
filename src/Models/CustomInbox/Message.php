@@ -222,10 +222,13 @@ class Message extends Model
         return __($this->bcc ? 'messaging.BCC' : 'To').': ';
     }
 
-    public function hasDifferentDistributions($recipientEmailAccountIds, $newSenderId = null)
+    public function hasDifferentDistributions($newToEmails, $newSenderEmail = null)
     {
-        $newSenderId = $newSenderId ?: currentMailboxId();
-        $newMessageRecipients = $recipientEmailAccountIds->concat([$newSenderId]);
+        $newSenderId = $newSenderEmail ? EmailAccount::findOrCreateFromEmail($newSenderEmail)->id : currentMailboxId();
+
+        $newEmailAccountIds = EmailAccount::transformRecipientsToEmailAccounts($newToEmails)->pluck('id');
+        
+        $newMessageRecipients = $newEmailAccountIds->concat([$newSenderId]);
 
         $parentMessageRecipients = $this->recipients->pluck('id')->concat([$this->sender_id]);
 
@@ -236,11 +239,6 @@ class Message extends Model
         }
 
         return false;
-    }
-
-    public static function transformRecipientsToEmailAccounts($recipients)
-    {
-        return collect($recipients)->map(fn($email) => EmailAccount::findOrCreateFromEmail($email));
     }
 
     /* ACTIONS */
