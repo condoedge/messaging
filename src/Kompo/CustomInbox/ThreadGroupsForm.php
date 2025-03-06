@@ -59,10 +59,10 @@ class ThreadGroupsForm extends Modal
 
 	public function showRecipientConfirmation($group)
 	{
-		$recipients = static::getMatchingRecipients($group);
+		$recipients = static::getMatchingRecipientOptions($group);
 		$recipientRows = _Rows(
 			$recipients->map(
-				fn($r) => _Html($r->email)->class('p-2 border-b border-gray-100')
+				fn($name, $email) => _Html($email)->class('p-2 border-b border-gray-100')
 			)
 		);
 
@@ -84,13 +84,14 @@ class ThreadGroupsForm extends Modal
 
 	public function getRecipientsMultiselect($group)
 	{
-		$recipients = static::getMatchingRecipients($group);
+		$recipients = static::getMatchingRecipientOptions($group);
+		
 		return _RecipientsMultiSelect()
-			->options($recipients->pluck('name', 'email'))
-			->default($recipients->pluck('email'));
+			->options($recipients)
+			->default($recipients->keys());
 	}
 
-	public static function getMatchingRecipients($group)
+	public static function getMatchingRecipientOptions($group)
 	{
 		$recipients = collect();
 
@@ -123,7 +124,7 @@ class ThreadGroupsForm extends Modal
 
 		return $recipients->reject(
 			fn($r) => ($r instanceOf User && $r->id == auth()->user()->id)
-		);
+		)->pluck('name', 'email');
 	}
 
 	public function sendOptions($mainSelectValue = null)

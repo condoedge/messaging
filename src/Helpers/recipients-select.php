@@ -82,8 +82,8 @@ function isValidEmail($email)
 function getRequestRecipients()
 {
     if ($group = request('massive_recipients_group')) {
-        $recipients = ThreadGroupsForm::getMatchingRecipients($group);
-        return RecipientsMultiSelect::getValidEmailOptionsFromGroup($recipients, $group);
+        $recipients = ThreadGroupsForm::getMatchingRecipientOptions($group);
+        return $recipients->keys();
     }
 
     return request('recipients');
