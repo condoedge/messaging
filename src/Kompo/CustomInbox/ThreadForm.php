@@ -31,6 +31,8 @@ class ThreadForm extends Form
 		$this->threadId = $this->parameter('id');
 		$this->thread = $this->threadId ? Thread::findOrFail($this->threadId) : null;
 
+		$this->prefilledRecipient = $this->prop('prefilled_to');
+
 		$this->model(new Message());
 	}
 
@@ -121,7 +123,7 @@ class ThreadForm extends Form
 				            ]) :
 
 					        _Rows(
-					        	_RecipientsMultiSelect(),
+					        	_RecipientsMultiSelect()->value([$this->prefilledRecipient]),
 
 							    _CcToggle(),
 

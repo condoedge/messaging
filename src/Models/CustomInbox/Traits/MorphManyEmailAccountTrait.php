@@ -46,7 +46,6 @@ trait MorphManyEmailAccountTrait
         $emailPrefix = \Str::before($this->mainEmail(), '@');
         $i = 0;
         while (!$this->createOrUpdateMailbox($emailPrefix)) {
-            dd($emailPrefix);
             $i ++;
             $emailPrefix = \Str::before($this->mainEmail(), '@').$i;
         }

@@ -58,7 +58,7 @@ function retrievedRecipientsMultiselect($email)
 	$entity = EmailAccount::where('email_adr', $email)->first();
 
 	return [
-		$email => $entity->getEmailOption()
+		$email => $entity?->getEmailOption() ?: $email,
 	];
 }
 

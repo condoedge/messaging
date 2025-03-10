@@ -36,6 +36,11 @@ function isMailbox($email)
     return strpos($email, getMailboxHost()) > -1;
 }
 
+function removeMailbox($email)
+{
+    return str_replace(getMailboxHost(), '', $email);
+}
+
 function threadSettingsOpen()
 {
     if (!auth()->id()) {

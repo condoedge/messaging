@@ -9,8 +9,8 @@ trait RecipientsMultiselectTrait
 		return searchRecipientsMultiselect($search);
 	}
 
-	public function retrieveRecipients($todo)
+	public function retrieveRecipients($email)
 	{
-		return retrievedRecipientsMultiselect($todo);
+		return retrievedRecipientsMultiselect($email);
 	}
 }
