@@ -162,9 +162,9 @@ class InboxView extends Query
                     $this->htmlFieldFilter('messaging-with-attachments', 'messages.attachments', 'paperclip-2')
                         ->selectedValue(1)
                         ->filter('>='),
-                    $this->htmlFieldFilter('messaging-current-team', 'current_union_id', 'building-4', false)
+/*                     $this->htmlFieldFilter('messaging-current-team', 'current_union_id', 'pet', false)
                         ->selectedValue(1)
-                        ->filter(),
+                        ->filter(), */
                 )->class('py-2'),
                 Thread::flagLinkGroup()->class('py-2')->filter(),
             )->class('px-4 flex-wrap')->alignCenter(),
