@@ -123,7 +123,7 @@ class ThreadForm extends Form
 				            ]) :
 
 					        _Rows(
-					        	_RecipientsMultiSelect()->value([$this->prefilledRecipient]),
+					        	_RecipientsMultiSelect()->value($this->prefilledRecipient ? [$this->prefilledRecipient] : null),
 
 							    _CcToggle(),
 
