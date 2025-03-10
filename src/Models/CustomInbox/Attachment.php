@@ -14,6 +14,10 @@ class Attachment extends Model
     /* RELATIONS */
 
     /* CALCULATED FIELDS */
+    public function getDisplayRoute()
+    {
+        return route('attm.display', ['id' => $this->id]);
+    }
 
     /* ACTIONS */
     public function delete()

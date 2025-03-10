@@ -29,6 +29,7 @@ Route::middleware(['auth'])->group(function(){
     Route::get('thread-groups', Condoedge\Messaging\Kompo\CustomInbox\ThreadGroupsForm::class)->name('thread-groups');
 
     Route::get('attm-download/{id}', Condoedge\Messaging\Http\Controllers\AttachmentDownloadController::class)->name('attm.download');
+    Route::get('attm-display/{id}', Condoedge\Messaging\Http\Controllers\AttachmentDisplayController::class)->name('attm.display');
 
     Route::get('mail-debug-single/{id}', Condoedge\Messaging\Http\Controllers\MailParseDebugController::class)->name('mail-debug-single');
 });
