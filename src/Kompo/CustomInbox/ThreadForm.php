@@ -97,10 +97,6 @@ class ThreadForm extends Form
 
 	public function response()
 	{
-		$this->model->attachments()->update([
-			'team_id' => $this->model->thread->team_id,
-		]);
-
 		return redirect()->route('custom-inbox', [
 			'thread_id' => $this->model->thread_id
 		]);
