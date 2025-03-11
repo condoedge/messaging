@@ -7,6 +7,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Mail\Mailables\Attachment;
 
 class ExternalEmailNotification extends Mailable
 {
@@ -46,7 +47,7 @@ class ExternalEmailNotification extends Mailable
      */
     public function build()
     {
-        $this->addAttachments($this->message);
+        //$this->addAttachments($this->message);
 
         $html = $this->message->html;
 
@@ -72,12 +73,21 @@ class ExternalEmailNotification extends Mailable
             ]);
     }
 
+    public function attachments(): array
+    {
+        $attachments = $this->message->attachments;
+
+        return $attachments->map(
+            fn($attm) => Attachment::fromStorageDisk($attm->disk, $attm->storagePath())->as($attm->display)
+        )->toArray();
+    }
+
     protected function addAttachments($message)
     {
         $message->load('attachments');
         
         return $message->attachments->each(function($attm){
-            $this->attach(\Storage::disk($attm->disk)->path($attm->storagePath()), ['as' => $attm->name]);
+            $this->attach($attm->storageDisk()->path($attm->storagePath()), ['as' => $attm->display]);
         });
     }
 }
