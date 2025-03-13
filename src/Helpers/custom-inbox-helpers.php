@@ -103,3 +103,5 @@ if (!function_exists('_BigButton')) {
         )->class('justify-center h-24 text-center items-center p-2 cursor-pointer');
     }
 }
+
+\Kompo\Elements\Element::macro('sendCustomEmailTo', fn($email) => $this->href('new.thread', ['prefilled_to' => $email ?: ''])->inNewTab());

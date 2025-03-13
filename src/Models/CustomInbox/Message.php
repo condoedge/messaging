@@ -3,11 +3,12 @@
 namespace Condoedge\Messaging\Models\CustomInbox;
 
 use App\Models\Messaging\Thread;
-use App\Models\Messaging\Message as AppMessage;
+use App\Models\Messaging\EmailAccount;
 use App\Models\Messaging\Attachment;
-use Kompo\Auth\Models\Files\File;
+use App\Models\Messaging\Message as AppMessage;
 
 use Condoedge\Messaging\Mail\ExternalEmailNotification;
+use Kompo\Auth\Models\Files\File;
 use Kompo\Auth\Models\Model;
 
 class Message extends Model
