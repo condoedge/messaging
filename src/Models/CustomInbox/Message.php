@@ -5,11 +5,11 @@ namespace Condoedge\Messaging\Models\CustomInbox;
 use App\Models\Messaging\Thread;
 use App\Models\Messaging\EmailAccount;
 use App\Models\Messaging\Attachment;
-use App\Models\Messaging\Message as AppMessage;
+use Condoedge\Utils\Facades\FileModel;
 
+use App\Models\Messaging\Message as AppMessage;
 use Condoedge\Messaging\Mail\ExternalEmailNotification;
-use Kompo\Auth\Models\Files\File;
-use Kompo\Auth\Models\Model;
+use Condoedge\Utils\Models\Model;
 
 class Message extends Model
 {
@@ -282,7 +282,7 @@ class Message extends Model
     public function addLinkedAttachments()
     {
         collect(request('selected_files'))->each(function($fileId){
-            $file = File::find($fileId);
+            $file = FileModel::find($fileId);
             Attachment::createAttachmentFromFile(
                 $this,
                 $file->name,

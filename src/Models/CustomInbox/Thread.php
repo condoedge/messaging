@@ -2,7 +2,7 @@
 
 namespace Condoedge\Messaging\Models\CustomInbox;
 
-use Kompo\Auth\Models\Model;
+use Condoedge\Utils\Models\Model;
 use App\Models\Messaging\Thread as AppThread;
 
 class Thread extends Model

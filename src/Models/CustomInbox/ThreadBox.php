@@ -3,11 +3,11 @@
 namespace Condoedge\Messaging\Models\CustomInbox;
 
 use App\Models\Messaging\Thread;
-use Kompo\Auth\Models\Model;
+use Condoedge\Utils\Models\Model;
 
 class ThreadBox extends Model
 {
-    use \Kompo\Auth\Models\Traits\BelongsToUserTrait;
+    use \Condoedge\Utils\Models\Traits\BelongsToUserTrait;
 
     public const BOX_ARCHIVE = 1;
     public const BOX_TRASH = 2;

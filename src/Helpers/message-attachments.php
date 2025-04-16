@@ -22,7 +22,7 @@ function _FileUploadLinkAndBox($name, $toggleOnLoad = true, $fileIds = [])
                     ->id('email-attachments-input')->run('calculateTotalFileSize'),
                 _Html('messaging-or')
                     ->class('text-sm text-gray-700 my-2 md:my-0'),
-                \Kompo\Auth\Files\FileLibraryAttachmentQuery::libraryFilesPanel($fileIds)
+                \Condoedge\Utils\Kompo\Files\FileLibraryAttachmentQuery::libraryFilesPanel($fileIds)
                     ->class('w-full md:w-5/12'),
             )->class('flex-wrap'),
             _Html('messaging-your-files-exceed-max-size')

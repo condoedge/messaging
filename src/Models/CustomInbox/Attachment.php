@@ -3,13 +3,13 @@
 namespace Condoedge\Messaging\Models\CustomInbox;
 
 use App\Models\Messaging\Attachment as AppAttachment;
-use Kompo\Auth\Models\Files\File;
-use Kompo\Auth\Models\Model;
+use Condoedge\Utils\Facades\FileModel;
+use Condoedge\Utils\Models\Model;
 
 class Attachment extends Model
 {
     use \Condoedge\Messaging\Models\CustomInbox\Traits\BelongsToMessageTrait;
-    use \Kompo\Auth\Models\Files\FileActionsKomponents;
+    use \Condoedge\Utils\Models\Files\FileActionsKomponents;
 
     /* RELATIONS */
 
@@ -22,7 +22,7 @@ class Attachment extends Model
     /* ACTIONS */
     public function delete()
     {
-        if ($this->existsOnStorage() && !File::where('path', $this->storagePath())->count()) {
+        if ($this->existsOnStorage() && !FileModel::where('path', $this->storagePath())->count()) {
             $this->storageDisk()->delete($this->storagePath());
         }
 

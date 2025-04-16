@@ -6,7 +6,7 @@ use App\Models\File;
 use App\Models\Messaging\Message;
 use App\Models\Messaging\Thread;
 use App\Models\Messaging\Signature;
-use Kompo\Form;
+use Condoedge\Utils\Kompo\Common\Form;
 
 class MessageReplyForm extends Form
 {

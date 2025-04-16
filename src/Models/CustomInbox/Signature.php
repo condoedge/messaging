@@ -2,7 +2,7 @@
 
 namespace Condoedge\Messaging\Models\CustomInbox;
 
-use Kompo\Auth\Models\Model;
+use Condoedge\Utils\Models\Model;
 
 class Signature extends Model
 {
