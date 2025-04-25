@@ -223,10 +223,10 @@ class InboxView extends Query
                 ),
 
                 !$lastMessage ? null :
-                    _Html($lastMessage->subject)->class('thread-subject text-level2 text-sm truncate'),
+                    _Html($lastMessage->subject)->class('thread-subject text-black text-sm truncate'),
 
                 !$lastMessage ? null :
-                    _Html($lastMessage->summary)->class('text-xs text-level2 truncate'),
+                    _Html($lastMessage->summary)->class('text-xs text-black opacity-70 truncate'),
 
                 _FlexBetween(
                     _Flex(
