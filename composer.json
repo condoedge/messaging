@@ -16,7 +16,8 @@
         "league/oauth2-client": "^2.6",
         "microsoft/microsoft-graph": "^1.73",
         "spatie/laravel-mail-preview": "*",
-        "beyondcode/laravel-mailbox": "^4.0"
+        "beyondcode/laravel-mailbox": "^4.0",
+        "condoedge/utils": "^0.0.6"
     },
     "extra": {
         "laravel": {

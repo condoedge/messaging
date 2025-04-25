@@ -4,7 +4,7 @@ namespace Condoedge\Messaging\Kompo\CustomInbox;
 
 use App\Models\Messaging\Thread;
 use App\Models\Messaging\ThreadBox;
-use Kompo\Form;
+use Condoedge\Utils\Kompo\Common\Form;;
 
 class ThreadSettingsForm extends Form
 {

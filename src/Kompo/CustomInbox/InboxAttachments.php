@@ -3,7 +3,7 @@
 namespace Condoedge\Messaging\Kompo\CustomInbox;
 
 use App\Models\Messaging\Thread;
-use Kompo\Query;
+use Condoedge\Utils\Kompo\Common\Query;
 
 class InboxAttachments extends Query
 {
