@@ -97,9 +97,7 @@ class ThreadForm extends Form
 
 	public function response()
 	{
-		return redirect()->route('custom-inbox', [
-			'thread_id' => $this->model->thread_id
-		]);
+		return redirect($this->model->thread->getPreviewRoute());
 	}
 
 	public function render()
