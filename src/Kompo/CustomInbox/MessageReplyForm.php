@@ -99,14 +99,6 @@ class MessageReplyForm extends Form
 		$this->model->addLinkedAttachments();
 	}
 
-	public function response()
-	{
-		return;
-		return redirect()->route('inbox', [
-			'thread_id' => $this->model->thread_id,
-		]);
-	}
-
 	public function render()
 	{
 		[$attachmentsLink, $attachmentsBox] = _FileUploadLinkAndBox('attachments', !$this->model->attachments->count());
@@ -137,7 +129,7 @@ class MessageReplyForm extends Form
 			        )->id($this->editorPanelId)
 				    ->class('email-ckeditor-delayed'),
 			        _Flex2(
-						Message::sendDropdown()->refresh('inbox-message-'.$this->thread->id)->alert('message-sent'),
+						Message::sendDropdown()->alert('message-sent')->refresh('inbox-message-'.$this->thread->id),
 						$attachmentsLink,
 						//Message::draftButton()->refresh('inbox-message-'.$this->thread->id),
 				        showSignatureOptionsLink(),

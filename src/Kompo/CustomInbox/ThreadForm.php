@@ -13,7 +13,7 @@ class ThreadForm extends Form
 	public $model = Message::class;
 
 	public $style = 'min-width: 75vw;max-width: 1060px';
-    public $class = 'bg-white md:pr-4';
+    public $class = 'bg-white p-4';
     public $containerClass = 'container-fluid';
 
 	protected $prefilledRecipient;
@@ -105,7 +105,7 @@ class ThreadForm extends Form
 		[$attachmentsLink, $attachmentsBox] = _FileUploadLinkAndBox('attachments');
 
 		return _Rows(
-			_PageTitle($this->thread?->subject ?: 'messaging-create-communication')
+			_PageTitle($this->thread?->subject ?: 'messaging-create-communication')->class('mb-6')
 				->icon('annotation'),
 			_Columns(
 				_Rows(
@@ -126,10 +126,9 @@ class ThreadForm extends Form
 						        	->get('thread-groups')
 						        	->inModal(),
 					        )
-					)->class('px-6 py-4 md:mx-4 mt-8')->class($this->boxClasses),
+					)->class('px-2')->class($this->boxClasses),
 				)->col('col-md-4'),
 				_Rows(
-					$this->messageTitle(),
 					_Panel(
 						_Rows(
 					        $this->threadId ? null : $this->subjectInput(),
@@ -144,21 +143,16 @@ class ThreadForm extends Form
 					        	showSignatureOptionsLink(),
 					        	//TemplatesQuery::templatesModalLink($this->editorPanelId),
 							)->class('mt-2'),
-						)->class('p-2'),
+						),
 						$attachmentsBox,
 						getSignatureActionButtons($this->signaturePanelId)->class('px-2'),
-					)->id('sliding-messages-form')->class('px-4 py-2')->class($this->boxClasses),
+					)->id('sliding-messages-form')->class('px-4')->class($this->boxClasses),
 
 					$this->threadId ? $this->threadHistory() : null
 
 				)->col('col-md-8'),
 			),
 		);
-	}
-
-	protected function messageTitle()
-	{
-		return _MiniTitle('messaging-message')->class('pt-4 px-4');
 	}
 
 	protected function sendMessageButton()
