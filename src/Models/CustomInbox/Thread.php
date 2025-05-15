@@ -82,6 +82,13 @@ class Thread extends Model
     }
 
     /* CALCULATED FIELDS */
+    public function getPreviewRoute()
+    {
+        return route('custom-inbox', [
+            'thread_id' => $this->id
+        ]);
+    }
+
     public static function flagLabels()
     {
         return [

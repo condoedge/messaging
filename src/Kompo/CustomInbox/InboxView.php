@@ -146,8 +146,7 @@ class InboxView extends Query
                     ->filter()
                     ->class('mb-0'),
                 _NewEmailBtn()->class('sm:hidden')
-                    ->href('new.thread')
-                    ->inNewTab()->class('mt-2'),
+                    ->selfGet('getNewThread')->inDrawer()->class('mt-2'),
             )->class('px-4 py-2'),
             _FlexBetween(
                 _Flex2(
@@ -266,6 +265,11 @@ class InboxView extends Query
             $e->addClass('read');
             $e->activate();
         });
+    }
+
+    public function getNewThread()
+    {
+        return new ThreadForm();
     }
 
     public function searchInboxes()

@@ -54,13 +54,6 @@ class ThreadSettingsForm extends Form
 
 					$this->actionButton('messaging-create-task', 'clipboard-tick')
 						->selfGet('createTask')->inDrawer()->class('card-level4 text-level1'),
-
-					/* TO DELETE
-					$this->actionButton('messaging.link-to-project', 'office-building')
-						->get('project-link.form', [
-							'thread_id' => $this->model->id
-						])
-						->inModal(), */
 				),
 			)->class('px-4 p-4'),
 			_Rows(
@@ -106,5 +99,12 @@ class ThreadSettingsForm extends Form
     {
         optional($this->model->box)->delete();
         return __('messaging-thread-untrashed');
+    }
+
+    public function createTask()
+    {
+    	return new \Kompo\Tasks\Components\Tasks\TaskForm([
+    		'thread_id' => $this->model->id,
+    	]);
     }
 }
