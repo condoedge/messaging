@@ -59,7 +59,7 @@ class GraphHelper
     }
 
     /* CREATE MESSAGE */
-    public static function sendEmail()
+    protected static function createOutlookMessage()
     {
         $message = new Model\Message();
         
@@ -128,10 +128,31 @@ class GraphHelper
 
         //dd($message);
 
-        getGraph()->createRequest("POST", "/me/sendmail")
+        return $message;
+    }
+
+    public static function sendEmail()
+    {
+        $message = static::createOutlookMessage();
+
+        $sentMessage = getGraph()->createRequest("POST", "/me/sendmail")
             ->addHeaders(array("Content-Type" => "application/json"))
             ->attachBody(['message' => $message])
             ->execute();
+
+        return $sentMessage;
+    }
+
+    public static function createDraft()
+    {
+        $message = static::createOutlookMessage();
+
+        $draftMessage = getGraph()->createRequest("POST", "/me/messages")
+            ->addHeaders(array("Content-Type" => "application/json"))
+            ->attachBody($message)
+            ->execute();
+
+        return $draftMessage;
     }
 
 
@@ -152,6 +173,17 @@ class GraphHelper
         $tag->setValue($value);
 
         return $tag;
+    }
+
+    public static function checkEmailRecipients()
+    {
+        $recipients = collect(request('recipients') ?: [])->concat(request('cc_recipients') ?: [])->concat(request('bcc_recipients') ?: [])->filter();
+
+        $invalidEmails = collect($recipients)->filter(fn($email) => !filter_var(trim($email), FILTER_VALIDATE_EMAIL));
+
+        if ($invalidEmails->count()) {
+            abort(403, '"'.$invalidEmails->first().'" '.__('translate.is not a valid email address! Please correct it and try again.'));
+        }
     }
 
     /* UPDATE MESSAGE */
