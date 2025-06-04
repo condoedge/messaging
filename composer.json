@@ -17,11 +17,7 @@
         "microsoft/microsoft-graph": "^1.73",
         "spatie/laravel-mail-preview": "*",
         "beyondcode/laravel-mailbox": "^4.0",
-<<<<<<< HEAD
         "condoedge/utils": "^v0.2.12"
-=======
-        "condoedge/utils": "^v0.2.12"
->>>>>>> 491bc29d260da464453214e6e5900063923b5fe0
     },
     "extra": {
         "laravel": {
