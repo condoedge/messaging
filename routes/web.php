@@ -15,6 +15,8 @@ Route::layout('layouts.dashboard')->middleware(['auth'])->group(function(){
 
 });
 
+Route::get('my-inbox-new-thread-inline/{prefilled_to?}', Condoedge\Messaging\Kompo\CustomInbox\ThreadForm::class)->name('new.thread.inline');
+
 Route::middleware(['auth'])->group(function(){
     Route::post('enableThreadSettingsOpen', fn() => enableThreadSettingsOpen());
     Route::post('disableThreadSettingsOpen', fn() => disableThreadSettingsOpen());

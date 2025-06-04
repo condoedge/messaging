@@ -27,7 +27,7 @@ class InboxMessages extends ThreadMessages
     {
         $newThreadKomponent = _FlexEnd(
             _NewEmailBtn()
-                ->href('new.thread')->inNewTab()
+                ->selfGet('getNewThread')->inDrawer()
                 ->warnBeforeClose('messaging-are-you-sure-you-want-to-close'),
         )->class('bg-gray-100');
 
@@ -82,6 +82,11 @@ class InboxMessages extends ThreadMessages
     public function bottom()
     {
         return _Panel()->id($this->messageFormPanelId);
+    }
+
+    public function getNewThread()
+    {
+        return new ThreadForm();
     }
 
     public function trashThread()
