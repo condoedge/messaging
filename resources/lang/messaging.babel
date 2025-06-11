@@ -1129,6 +1129,21 @@
 							</translation>
 						</translations>
 					</concept_node>
+					<concept_node>
+						<name>validation-you-may-still-remove-recipient</name>
+						<description/>
+						<comment/>
+						<translations>
+							<translation>
+								<language>en-US</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>fr-FR</language>
+								<approved>false</approved>
+							</translation>
+						</translations>
+					</concept_node>
 				</children>
 			</package_node>
 		</children>

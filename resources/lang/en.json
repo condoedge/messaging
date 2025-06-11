@@ -72,5 +72,6 @@
 	"messaging-your-files-exceed-max-size": "Your files exceed max size aloud",
 	"messgaging-send": "Send",
 	"survey-back": "Back",
-	"survey-next": "Next"
+	"survey-next": "Next",
+	"validation-you-may-still-remove-recipient": "You will be able to remove recipients in the other page"
 }
