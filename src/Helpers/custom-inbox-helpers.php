@@ -104,4 +104,4 @@ if (!function_exists('_BigButton')) {
     }
 }
 
-\Kompo\Elements\Element::macro('sendCustomEmailTo', fn($email) => $this->href('new.thread', ['prefilled_to' => $email ?: ''])->inNewTab());
+\Kompo\Elements\Element::macro('sendCustomEmailTo', fn($email) => $this->get('new.thread.inline', ['prefilled_to' => $email ?: ''])->inDrawer());

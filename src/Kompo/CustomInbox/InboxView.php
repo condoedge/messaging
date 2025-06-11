@@ -218,14 +218,14 @@ class InboxView extends Query
                     _Html($firstMessage->sender->name)
                         ->class('text-xs leading-5 font-medium text-level1 opacity-60 truncate'),
                     _Html($lastMessage->created_at->translatedFormat('d M Y'))
-                        ->class('ml-2 text-xs text-level1 opacity-60 whitespace-nowrap')
+                        ->class('ml-2 text-xs text-level1 whitespace-nowrap')
                 ),
 
                 !$lastMessage ? null :
-                    _Html($lastMessage->subject)->class('thread-subject text-black text-sm truncate'),
+                    _Html($lastMessage->subject)->class('thread-subject text-gray-700 text-sm truncate'),
 
                 !$lastMessage ? null :
-                    _Html($lastMessage->summary)->class('text-xs text-black opacity-70 truncate'),
+                    _Html($lastMessage->summary)->class('text-xs text-gray-700 truncate'),
 
                 _FlexBetween(
                     _Flex(
@@ -258,7 +258,7 @@ class InboxView extends Query
         )
         ->alignStart()
         ->class('inbox-message')
-        ->class($isRead ? 'read bg-gray-100' : 'bg-gray-200')
+        ->class($isRead ? 'read' : '')
         ->get('inbox.message', ['id' => $thread->id])
         ->onSuccess(function($e) use($thread){
             $this->inPanelUpdateHistory($e, $thread->id);
@@ -320,7 +320,7 @@ class InboxView extends Query
 
     protected function boxButton($icon, $method, $thread, $key = false)
     {
-        $link = _Link()->icon(_Sax($icon,16))->class('text-level3')
+        $link = _Link()->icon(_Sax($icon,16))->class('text-level1')
             ->balloon(ucfirst(str_replace('Thread', '', $method)), 'up-right')
             ->selfPost($method, [
                 'id' => $thread->id,
@@ -354,7 +354,7 @@ class InboxView extends Query
 
     protected function readUnreadButton($label, $icon, $method, $thread)
     {
-        return _Link()->icon(_Sax($icon,18))->class('text-level3')
+        return _Link()->icon(_Sax($icon,18))->class('text-level1')
             ->balloon($label, 'up-right')
             ->selfPost($method, [
                 'id' => $thread->id,
