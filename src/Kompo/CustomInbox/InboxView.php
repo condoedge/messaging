@@ -154,12 +154,15 @@ class InboxView extends Query
                         ->class(btnFilterClass())->class('block')
                         ->toggleClass('bg-info text-level1')
                         ->toggleId($this->moreInboxFilters)
+                        ->balloon('messaging-search')
                         ->run('focusSearchOnToggle'),
                     $this->htmlFieldFilter('messaging-unread', 'lastMessage.read', 'sms')
                         ->selectedValue(1)
+                        ->balloon('messaging-unread')
                         ->filter('NULL'),
                     $this->htmlFieldFilter('messaging-with-attachments', 'messages.attachments', 'paperclip-2')
                         ->selectedValue(1)
+                        ->balloon('messaging-with-attachments')
                         ->filter('>='),
 /*                     $this->htmlFieldFilter('messaging-current-team', 'current_union_id', 'pet', false)
                         ->selectedValue(1)

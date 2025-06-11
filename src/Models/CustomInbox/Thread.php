@@ -96,8 +96,8 @@ class Thread extends Model
             AppThread::FLAG_SORT => __('messaging-to-sort'),
             AppThread::FLAG_WAIT => __('messaging-waiting'),
             AppThread::FLAG_REPLY => __('messaging-to-reply'),
-            AppThread::FLAG_5 => __('messaging-to-reply'),
-            AppThread::FLAG_6 => __('messaging-to-reply'),
+            AppThread::FLAG_5 => __('messaging-custom1'),
+            AppThread::FLAG_6 => __('messaging-custom2'),
         ];
     }
 
