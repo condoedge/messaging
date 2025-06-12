@@ -12,6 +12,11 @@ Route::layout('layouts.dashboard')->middleware(['auth'])->group(function(){
     Route::get('my-inbox-new-thread', Condoedge\Messaging\Kompo\CustomInbox\ThreadForm::class)->name('new.thread');
 
 });
+Route::layout('layouts.print')->middleware(['auth'])->group(function(){
+
+    Route::get('message-print/{id}', Condoedge\Messaging\Kompo\CustomInbox\MessagePrint::class)->name('message-print');
+
+});
 
 // If it cames from get() or post() instead of selfGet or a normal route, it must be outside of the layout
 Route::get('thread-settings/{id?}', Condoedge\Messaging\Kompo\CustomInbox\ThreadSettingsForm::class)->name('thread-settings.form');
