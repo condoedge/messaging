@@ -343,8 +343,8 @@ class Message extends Model
         $messageRead = $this->read()->first();
 
         if ($messageRead) {
-
-            $emailAccount = EmailAccount::findFromType($messageRead->entity_type, $messageRead->entity_id);
+            
+            $emailAccount = currentMailbox();
             $emailAccount->unread_count = ($emailAccount->unread_count ?: 0) + 1;
             $emailAccount->save();
 
