@@ -34,13 +34,18 @@ Route::middleware(['auth'])->group(function(){
     Route::get('attm-display/{id}', Condoedge\Messaging\Http\Controllers\AttachmentDisplayController::class)->name('attm.display');
 
     Route::get('mail-debug-single/{id}', Condoedge\Messaging\Http\Controllers\MailParseDebugController::class)->name('mail-debug-single');
+
+
+    //OUTLOOK ROUTES
+    Route::get('outlook-download/{message_id}/{att_id}', Condoedge\Messaging\Http\Controllers\OutlookDownloadController::class)->name('outlook.download');
+
+
+    //GOOGLE ROUTES
+    Route::get('google-sso', [GoogleSsoController::class, 'redirectToSso'])->name('google-sso');
+    Route::get('google-sso-return', [GoogleSsoController::class, 'returnFromSso'])->name('google-sso-return');
+    Route::get('google-sso-signout', [GoogleSsoController::class, 'signout'])->name('google-sso-signout');
+    Route::get('change-google-token/{id}', [GoogleSsoController::class, 'changeGoogleToken'])->name('change-google-token');
+    Route::get('reset-google-token', [GoogleSsoController::class, 'resetGoogleToken'])->name('reset-google-token');
+
+    Route::get('gmail-download/{message_id}/{att_id}', Condoedge\Messaging\Http\Controllers\GmailDownloadController::class)->name('gmail.download');
 });
-
-
-
-//GOOGLE ROUTES
-Route::get('google-sso', [GoogleSsoController::class, 'redirectToSso'])->name('google-sso');
-Route::get('google-sso-return', [GoogleSsoController::class, 'returnFromSso'])->name('google-sso-return');
-Route::get('google-sso-signout', [GoogleSsoController::class, 'signout'])->name('google-sso-signout');
-Route::get('change-google-token/{id}', [GoogleSsoController::class, 'changeGoogleToken'])->name('change-google-token');
-Route::get('reset-google-token', [GoogleSsoController::class, 'resetGoogleToken'])->name('reset-google-token');

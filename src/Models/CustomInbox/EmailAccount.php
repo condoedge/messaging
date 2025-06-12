@@ -36,7 +36,7 @@ class EmailAccount extends Model
 
     protected function defaultProfilePhotoUrl()
     {
-        return 'https://ui-avatars.com/api/?name='.urlencode($this->mainEmail()).'&color=7F9CF5&background=EBF4FF';
+        return avatarFromText($this->mainEmail());
     }
 
 	public function getNameAttribute()
