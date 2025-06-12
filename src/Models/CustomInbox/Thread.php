@@ -215,25 +215,17 @@ class Thread extends Model
 
     public function scopeIsArchived($query)
     {
-        $query->whereHas('box', fn($q) => $q->archive());
+        $query->whereHas('boxes', fn($q) => $q->where('email_account_id', currentMailboxId())->archive());
     }
 
     public function scopeIsTrashed($query)
     {
-        $query->whereHas('box', fn($q) => $q->trash());
+        $query->whereHas('boxes', fn($q) => $q->where('email_account_id', currentMailboxId())->trash());
     }
 
     public function scopeHasDrafts($query)
     {
         $query->whereHas('messages', fn($q) => $q->isDraft());
-    }
-
-    public function scopeIsNotTrashed($query)
-    {
-        $query->where(function($q){
-            $q->doesntHave('box')
-              ->orWhereHas('box', fn($q1) => $q1->notTrash());
-        });
     }
 
     public function scopeNotAssociatedToAnyBox($query)
@@ -258,8 +250,7 @@ class Thread extends Model
         }
 
         $query->whereDoesntHave('boxes',
-            fn($q) => $q->where('email_account_id', $emailAccount->id)
-                        ->where('box', ThreadBox::BOX_TRASH)
+            fn($q) => $q->where('email_account_id', $emailAccount->id)->trash()
         );
     }
 
