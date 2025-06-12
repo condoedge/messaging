@@ -18,6 +18,8 @@
 	"messaging-create-communication": "Nouveau message",
 	"messaging-create-task": "Créer une tâche",
 	"messaging-current-team": "Cette équipe",
+	"messaging-custom1": "Personnalisé 1",
+	"messaging-custom2": "Personnalisé 2",
 	"messaging-draft": "Brouillon",
 	"messaging-draft-saved": "Brouillon enregistré",
 	"messaging-edit": "Modifier",
@@ -43,6 +45,7 @@
 	"messaging-quick-actions": "Actions rapides",
 	"messaging-reply": "Répondre",
 	"messaging-reply-all": "Répondre à tous",
+	"messaging-search": "Recherche",
 	"messaging-search-messages": "Rechercher des messages",
 	"messaging-search-recipients": "Rechercher des destinataires",
 	"messaging-select-group": "Sélectionner le groupe",
@@ -69,5 +72,6 @@
 	"messaging-your-files-exceed-max-size": "Vos fichiers dépassent la taille maximale autorisée",
 	"messgaging-send": "Envoyer",
 	"survey-back": "Retour",
-	"survey-next": "Suivant"
+	"survey-next": "Suivant",
+	"validation-you-may-still-remove-recipient": "Vous pourrez supprimer des destinataires dans l'autre page."
 }

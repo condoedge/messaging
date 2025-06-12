@@ -18,6 +18,8 @@
 	"messaging-create-communication": "New message",
 	"messaging-create-task": "Create task",
 	"messaging-current-team": "Current team",
+	"messaging-custom1": "Custom 1",
+	"messaging-custom2": "Custom 2",
 	"messaging-draft": "Draft",
 	"messaging-draft-saved": "Draft saved",
 	"messaging-edit": "Edit",
@@ -43,6 +45,7 @@
 	"messaging-quick-actions": "Quick actions",
 	"messaging-reply": "Reply",
 	"messaging-reply-all": "Reply all",
+	"messaging-search": "Search",
 	"messaging-search-messages": "Search messages",
 	"messaging-search-recipients": "Search recipients",
 	"messaging-select-group": "Select group",
@@ -69,5 +72,6 @@
 	"messaging-your-files-exceed-max-size": "Your files exceed max size aloud",
 	"messgaging-send": "Send",
 	"survey-back": "Back",
-	"survey-next": "Next"
+	"survey-next": "Next",
+	"validation-you-may-still-remove-recipient": "You will be able to remove recipients in the other page"
 }
