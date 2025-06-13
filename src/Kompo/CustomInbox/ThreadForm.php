@@ -41,7 +41,7 @@ class ThreadForm extends Form
 	public function beforeSave()
 	{
 		checkRecipientsAreValid();
-dd(request()->all());
+
 		if($this->threadId){
 			$this->model->thread_id = $this->threadId;
 			$this->model->subject = 'RE: '.$this->thread->lastMessage->subject;
