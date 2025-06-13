@@ -12,7 +12,7 @@ class MessageReplyAllForm extends MessageReplyForm
 		return $this->parentMessage->recipients->concat([$this->parentMessage->sender])->map(function($e) {
 
             if (!$e->belongsToAuthUser()) {
-                return RecipientsMultiSelect::recipientOptionValue($e->entity ?: $e);
+                return $e->email_adr;
             }
 
         })->filter();

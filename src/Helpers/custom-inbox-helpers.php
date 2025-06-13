@@ -91,7 +91,7 @@ function _HtmlFieldFilter()
 {
     return _HtmlField()
         ->class(btnFilterClass())
-        ->selectedClass('bg-info text-level1');
+        ->selectedClass(config('condoedge-messaging.inbox-filters-selected-class'));
 }
 
 if (!function_exists('_BigButton')) {

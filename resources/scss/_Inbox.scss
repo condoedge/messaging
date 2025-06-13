@@ -18,7 +18,6 @@
 		.readButton{
 			@apply hidden;
 		}
-		@apply bg-gray-100;
 	}
 	&.active-thread{
 		@apply bg-blue-700/[.10];

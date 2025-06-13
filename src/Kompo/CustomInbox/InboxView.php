@@ -131,6 +131,7 @@ class InboxView extends Query
             _Select()->name('used_inbox', false)
                 ->searchOptions(0, 'searchInboxes', 'retrieveInbox')->class('mb-0 pt-2 px-4')->class('noClear')
                 ->value(currentMailboxId())
+                ->noResultsMessage('translate.no-other-mailboxes-available')
                 ->selfPost('impersonateMailbox')->redirect('inbox'),
             _Rows(
                 _ButtonGroup()
@@ -141,7 +142,7 @@ class InboxView extends Query
                         3 => $this->iconFilter('archive-1', 'messaging-archive'),
                         4 => $this->iconFilter('trash', 'messaging-trash'),
                         5 => $this->iconFilter('document-text', 'messaging-draft', 'down-right'),
-                    ])
+                    ])->selectedClass(config('condoedge-messaging.inbox-filters-selected-class'), '')
                     ->default(1)
                     ->filter()
                     ->class('mb-0'),
@@ -152,7 +153,7 @@ class InboxView extends Query
                 _Flex2(
                     _Link()->icon(_Sax('search-normal-1',18))
                         ->class(btnFilterClass())->class('block')
-                        ->toggleClass('bg-info text-level1')
+                        ->toggleClass(config('condoedge-messaging.inbox-filters-selected-class'))
                         ->toggleId($this->moreInboxFilters)
                         ->balloon('messaging-search')
                         ->run('focusSearchOnToggle'),
@@ -277,6 +278,7 @@ class InboxView extends Query
 
     public function searchInboxes()
     {
+        return [];
         return auth()->user()->impersonatableMailboxes()->mapWithKeys(fn($mailbox) => [
             $mailbox->id => $mailbox->getUnreadPillHtml().$mailbox->mainEmail(),
         ]);

@@ -80,7 +80,7 @@ class ThreadMessages extends Query
 
                                 _Flex(
                                     _Flex(
-                                        $message->sender->recipientEmailWithLink($this->threadId)
+                                        $message->sender->recipientEmailWithLink()
                                             ->class('text-sm font-semibold text-level1 mr-2'),
                                         _Html($message->created_at->format('d M Y H:i'))
                                             ->class('text-xs text-level1 opacity-70 whitespace-nowrap'),
@@ -135,7 +135,7 @@ class ThreadMessages extends Query
         return _Div(
             _Html($message->recipientsPrefixString())->class('inline'),
             ...$message->recipients->map(
-                fn($recipient) => $recipient->recipientEmailWithLink($this->threadId)->class('text-level1 opacity-70')
+                fn($recipient) => $recipient->recipientEmailWithLink()->class('text-level1 opacity-70')
             )
         )->class('space-x-2')
         ->class('message-recipients text-level1 text-xs');

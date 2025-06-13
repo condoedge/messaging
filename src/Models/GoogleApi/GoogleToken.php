@@ -27,6 +27,8 @@ class GoogleToken extends Model
         if ($this->isEmptyOrNotUsable()) {
             if ($this->access_token && !$this->refresh_token) { //This case should not happen but if it does we need to restart the process
                 initGClient()->revokeToken($this->access_token);
+                auth()->user()->setCurrentGoogleTokenToken(null);
+                $this->delete();
             }
             return '';
         }
