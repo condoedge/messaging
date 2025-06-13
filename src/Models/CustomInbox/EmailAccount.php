@@ -86,16 +86,9 @@ class EmailAccount extends Model
         return $this->entity ? $this->entity->getEmailOption() : _EmailHtml($this->mainEmail());
     }
 
-    public function recipientEmailWithLink($threadId = null)
+    public function recipientEmailWithLink()
     {
-        return ($this->entity_type || !$threadId || !$this->email) ?
-            _Html($this->getRecipientString())->class('inline') :
-            _Link($this->getRecipientString())
-                ->class('cursor-pointer hover:underline hover:text-level3')
-                ->get('email-link-entity', [
-                    'email' => $this->email,
-                    'thread_id' => $threadId,
-                ])->inModal();
+        return _Html($this->getRecipientString())->class('inline');
     }
 
     public function getUnreadPillHtml()
