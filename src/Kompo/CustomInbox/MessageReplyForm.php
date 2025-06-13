@@ -23,6 +23,8 @@ class MessageReplyForm extends Form
 
 	protected $messageType = Message::REPLY_TYPE;
 
+	protected $maxFilesSize = 20000; // 20 MB
+
 	public function created()
 	{
 		$this->parentMessageId = $this->parameter('parent_id') ?: $this->store('reply_to_message_id');
@@ -101,7 +103,7 @@ class MessageReplyForm extends Form
 
 	public function render()
 	{
-		[$attachmentsLink, $attachmentsBox] = _FileUploadLinkAndBox('attachments', !$this->model->attachments->count());
+		[$attachmentsLink, $attachmentsBox] = _FileUploadLinkAndBox('attachments', !$this->model->attachments->count(), maxFilesSize: $this->maxFilesSize);
 
 		return [
 			_Rows(
@@ -153,8 +155,8 @@ class MessageReplyForm extends Form
 			'recipients' => 'required_without:massive_recipients_group',
 			'html' => 'required_without:attachments',
 		], [
-			'attachments.*' => 'max:20000',
-			'attachments' => [new \Condoedge\Messaging\Rules\FilesTotalUploadSize(20000)],
+			'attachments.*' => 'max:' . $this->maxFilesSize . '|mimes:' . implode(',', attachmentsValidTypes()),
+			'attachments' => [new \Condoedge\Messaging\Rules\FilesTotalUploadSize($this->maxFilesSize), 'max:20'],
 		]);
 	}
 }

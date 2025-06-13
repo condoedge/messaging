@@ -26,6 +26,8 @@ class ThreadForm extends Form
 
 	protected $boxClasses = 'card-gray-100';
 
+	protected $maxFilesSize = 20000; // 20 MB
+
 	public function created()
 	{
 		$this->threadId = $this->parameter('id');
@@ -39,7 +41,7 @@ class ThreadForm extends Form
 	public function beforeSave()
 	{
 		checkRecipientsAreValid();
-
+dd(request()->all());
 		if($this->threadId){
 			$this->model->thread_id = $this->threadId;
 			$this->model->subject = 'RE: '.$this->thread->lastMessage->subject;
@@ -102,7 +104,7 @@ class ThreadForm extends Form
 
 	public function render()
 	{
-		[$attachmentsLink, $attachmentsBox] = _FileUploadLinkAndBox('attachments');
+		[$attachmentsLink, $attachmentsBox] = _FileUploadLinkAndBox('attachments', maxFilesSize: 20000);
 
 		return _Rows(
 			_PageTitle($this->thread?->subject ?: 'messaging-create-communication')->class('mb-6')
@@ -180,8 +182,8 @@ class ThreadForm extends Form
 			'subject' => $this->threadId ? '' : 'required|max:1000',
 			'html' => 'required_without:attachments',
 		], [
-			'attachments.*' => 'max:20000',
-			'attachments' => [new \Condoedge\Messaging\Rules\FilesTotalUploadSize(20000)],
+			'attachments.*' => 'max:' . $this->maxFilesSize . '|mimes:' . implode(',', attachmentsValidTypes()),
+			'attachments' => [new \Condoedge\Messaging\Rules\FilesTotalUploadSize($this->maxFilesSize), 'max:20'],
 		]);
 	}
 

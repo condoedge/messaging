@@ -3,7 +3,7 @@
 /* ACTIONS */
 
 /* ELEMENTS */
-function _FileUploadLinkAndBox($name, $toggleOnLoad = true, $fileIds = [])
+function _FileUploadLinkAndBox($name, $toggleOnLoad = true, $fileIds = [], $maxFilesSize = null)
 {
     $panelId = 'file-upload-'.uniqid();
 
@@ -18,8 +18,13 @@ function _FileUploadLinkAndBox($name, $toggleOnLoad = true, $fileIds = [])
 
         _Rows(
             _FlexBetween(
-                _MultiFile()->placeholder('messaging-browse-files')->name($name)->class('mb-0 w-full md:w-5/12')
-                    ->id('email-attachments-input')->run('calculateTotalFileSize'),
+                _Rows(
+                    _MultiFile()->placeholder('messaging-browse-files')->name($name)->class('mb-0')
+                        ->id('email-attachments-input')->run('calculateTotalFileSize'),
+                    !$maxFilesSize ? null : _Html(__('translate.with-values.max-files-size-is', [
+                        'size' => $maxFilesSize
+                    ]))->class('text-xs text-gray-500 absolute -bottom-5'),
+                )->class('relative w-full md:w-5/12'),
                 _Html('messaging-or')
                     ->class('text-sm text-gray-700 my-2 md:my-0'),
                 \Condoedge\Utils\Kompo\Files\FileLibraryAttachmentQuery::libraryFilesPanel($fileIds)
@@ -31,4 +36,13 @@ function _FileUploadLinkAndBox($name, $toggleOnLoad = true, $fileIds = [])
         ->id($panelId)
 
     ];
+}
+
+function attachmentsValidTypes()
+{
+    if (app()->has('attachment-valid-types')) {
+        return app('attachment-valid-types');
+    }
+
+    return ['jpg','jpeg','png','gif','doc','docx','pdf','txt','zip','rar','xlsx','xls','csv','ppt','pptx'];
 }
