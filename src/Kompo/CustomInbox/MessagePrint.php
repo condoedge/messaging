@@ -21,7 +21,7 @@ class MessagePrint extends Form
 	            ...$this->model->recipients->map(
 	                fn($recipient) => $recipient->recipientEmailWithLink()->class('text-gray-700')
 	            )
-	        )->class('space-x-2 mb-4')
+	        )->class('space-x-2 mb-8')
 	        ->class('text-gray-700 text-xs'),
 			_Html($this->model->getHtmlToAppend())
                 ->class('text-sm text-gray-700 mb-4')

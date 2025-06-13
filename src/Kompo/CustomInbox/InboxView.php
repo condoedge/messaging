@@ -141,7 +141,7 @@ class InboxView extends Query
                         3 => $this->iconFilter('archive-1', 'messaging-archive'),
                         4 => $this->iconFilter('trash', 'messaging-trash'),
                         5 => $this->iconFilter('document-text', 'messaging-draft', 'down-right'),
-                    ])
+                    ])->selectedClass(config('condoedge-messaging.inbox-filters-selected-class'), '')
                     ->default(1)
                     ->filter()
                     ->class('mb-0'),
@@ -152,7 +152,7 @@ class InboxView extends Query
                 _Flex2(
                     _Link()->icon(_Sax('search-normal-1',18))
                         ->class(btnFilterClass())->class('block')
-                        ->toggleClass('bg-info text-level1')
+                        ->toggleClass(config('condoedge-messaging.inbox-filters-selected-class'))
                         ->toggleId($this->moreInboxFilters)
                         ->balloon('messaging-search')
                         ->run('focusSearchOnToggle'),
