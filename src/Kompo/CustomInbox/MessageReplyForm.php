@@ -2,7 +2,7 @@
 
 namespace Condoedge\Messaging\Kompo\CustomInbox;
 
-use App\Models\File;
+use Condoedge\Utils\Facades\FileModel;
 use App\Models\Messaging\Message;
 use App\Models\Messaging\Thread;
 use App\Models\Messaging\Signature;
@@ -22,8 +22,6 @@ class MessageReplyForm extends Form
 	protected $thread;
 
 	protected $messageType = Message::REPLY_TYPE;
-
-	protected $maxFilesSize = 20000; // 20 MB
 
 	public function created()
 	{
@@ -103,7 +101,7 @@ class MessageReplyForm extends Form
 
 	public function render()
 	{
-		[$attachmentsLink, $attachmentsBox] = _FileUploadLinkAndBox('attachments', !$this->model->attachments->count(), maxFilesSize: $this->maxFilesSize);
+		[$attachmentsLink, $attachmentsBox] = FileModel::fileUploadLinkAndBox('attachments', !$this->model->attachments->count());
 
 		return [
 			_Rows(
@@ -154,9 +152,6 @@ class MessageReplyForm extends Form
 		return array_merge(request('is_draft') ? [] : [
 			'recipients' => 'required_without:massive_recipients_group',
 			'html' => 'required_without:attachments',
-		], [
-			'attachments.*' => 'max:' . $this->maxFilesSize . '|mimes:' . implode(',', attachmentsValidTypes()),
-			'attachments' => [new \Condoedge\Messaging\Rules\FilesTotalUploadSize($this->maxFilesSize), 'max:20'],
-		]);
+		], FileModel::attachmentsRules());
 	}
 }
