@@ -5,6 +5,7 @@ namespace Condoedge\Messaging\Kompo\CustomInbox;
 use App\Models\Messaging\Message;
 use App\Models\Messaging\Thread;
 use Condoedge\Utils\Kompo\Common\Form;
+use Condoedge\Utils\Facades\FileModel;
 
 class ThreadForm extends Form
 {
@@ -102,7 +103,7 @@ class ThreadForm extends Form
 
 	public function render()
 	{
-		[$attachmentsLink, $attachmentsBox] = _FileUploadLinkAndBox('attachments');
+		[$attachmentsLink, $attachmentsBox] = FileModel::fileUploadLinkAndBox('attachments');
 
 		return _Rows(
 			_PageTitle($this->thread?->subject ?: 'messaging-create-communication')->class('mb-6')
@@ -179,10 +180,7 @@ class ThreadForm extends Form
 			'recipients' => $this->threadId ? '' : 'required_without:massive_recipients_group',
 			'subject' => $this->threadId ? '' : 'required|max:1000',
 			'html' => 'required_without:attachments',
-		], [
-			'attachments.*' => 'max:20000',
-			'attachments' => [new \Condoedge\Messaging\Rules\FilesTotalUploadSize(20000)],
-		]);
+		], FileModel::attachmentsRules());
 	}
 
 }
