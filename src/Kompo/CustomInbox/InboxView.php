@@ -128,11 +128,12 @@ class InboxView extends Query
     public function top()
     {
         return _Rows(
-            _Select()->name('used_inbox', false)
+            new EmailAccountInboxOption(currentMailboxId()),
+            /*_Select()->name('used_inbox', false)
                 ->searchOptions(0, 'searchInboxes', 'retrieveInbox')->class('mb-0 pt-2 px-4')->class('noClear')
                 ->value(currentMailboxId())
                 ->noResultsMessage('translate.no-other-mailboxes-available')
-                ->selfPost('impersonateMailbox')->redirect('inbox'),
+                ->selfPost('impersonateMailbox')->redirect('inbox'),*/
             _Rows(
                 _ButtonGroup()
                     ->name('filters', false)
@@ -268,6 +269,7 @@ class InboxView extends Query
             $this->inPanelUpdateHistory($e, $thread->id);
             $e->addClass('read');
             $e->activate();
+            $e->refresh('email-account-inbox-option');
         });
     }
 
@@ -365,7 +367,7 @@ class InboxView extends Query
                 'id' => $thread->id,
             ])->attr([
                 'onClick' => 'message'.$method.'(this)'
-            ]);
+            ])->refresh('email-account-inbox-option');
     }
 
     protected function inPanelUpdateHistory($e, $threadId)
@@ -453,16 +455,6 @@ class InboxView extends Query
 
 var hammerInstances = []
 activateSwipe() //for some reason, I had to add this because when Query mounted(), this func is not registered yet...
-
-
-calculateUnreadMessages()
-function calculateUnreadMessages()
-{
-    $.ajax({
-        url: "/calculate-unread-messages",
-        type: 'GET',
-    });
-}
 
 function activateSwipe()
 {
