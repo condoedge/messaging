@@ -26,6 +26,7 @@ Route::get('my-inbox-new-thread-inline/{prefilled_to?}', Condoedge\Messaging\Kom
 Route::middleware(['auth'])->group(function(){
     Route::post('enableThreadSettingsOpen', fn() => enableThreadSettingsOpen());
     Route::post('disableThreadSettingsOpen', fn() => disableThreadSettingsOpen());
+    Route::get('calculate-unread-messages', [Condoedge\Messaging\Http\Controllers\CustomInboxController::class, 'calculateUnreadMessages']);
 
     Route::get('inbox/message/{id}', Condoedge\Messaging\Kompo\CustomInbox\InboxMessages::class)->name('inbox.message');
 
