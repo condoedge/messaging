@@ -121,7 +121,9 @@ class Thread extends Model
     public static function flagOptions($dimensions = 'w-6 h-6')
     {
         return collect(AppThread::flagLabels())->mapWithKeys(fn($label, $key) => [
-            $key => _Html()->class('rounded-full')->class($dimensions)->class(AppThread::flagColors()[$key])->balloon($label, 'up-right')
+            $key => _Html()->class('rounded-full')->class($dimensions)->class(AppThread::flagColors()[$key])->balloon($label, 'up-right')->attr([
+                'data-flagcol' => AppThread::flagColors()[$key],
+            ])
         ]);
     }
 
