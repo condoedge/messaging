@@ -122,7 +122,7 @@ class InboxView extends Query
                 break;
         }
 
-        return $q->orderByDesc('last_message_at');
+        return $q->orderByRaw('IFNULL(last_message_at, created_at) DESC');
     }
 
     public function top()

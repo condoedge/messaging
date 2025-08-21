@@ -99,6 +99,8 @@ class CatchIncomingEmails
             $currentThread->boxes()->delete();
 
             static::createIncomingMessage($email, $currentThread);
+
+            $currentThread->updateStats();
             
         });
 
