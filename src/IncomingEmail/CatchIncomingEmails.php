@@ -129,6 +129,8 @@ class CatchIncomingEmails
     {
         collect($attachments)->each(function ($attm) use ($message) {
 
+            $defaultDisk = 's3';
+
             if($attm instanceOf UploadedFile){
                 
                 $fileInfo = (new FileHandler)->fileToDB($attm, $message);
@@ -137,7 +139,8 @@ class CatchIncomingEmails
                     $message, 
                     $fileInfo['name'],
                     $fileInfo['mime_type'],
-                    $fileInfo['path']
+                    $fileInfo['path'],
+                    $fileInfo['disk'] ?? $defaultDisk,
                 );
 
             }else if($attm instanceOf File){
@@ -147,6 +150,7 @@ class CatchIncomingEmails
                     $attm->name,
                     $attm->mime_type,
                     $attm->path,
+                    $attm->disk,
                 );
 
             }else{
@@ -155,9 +159,11 @@ class CatchIncomingEmails
                 $ext = \Str::afterLast($origFilename, '.');
                 $filename = \Str::uuid()->toString().($ext ? ('.'.$ext) : '');
                 $path = "mysql/attachments/path";
-                \Storage::disk('public')->makeDirectory("{$path}", 0755, true);
+                //\Storage::disk($defaultDisk)->makeDirectory("{$path}", 0755, true);
                 try {
-                    $attm->saveContent(storage_path("app/{$path}/{$filename}"));                    
+                    $content = $attm->getContent();
+                    \Storage::disk($defaultDisk)->put($path, $content);
+                    //$attm->saveContent(storage_path("app/{$path}/{$filename}"));                    
                 } catch (\Throwable $e) {
                     \Log::info("Error saving attm in message: ".$message->id." - PATH: app/{$path}/{$filename}");                    
                 }
@@ -166,7 +172,8 @@ class CatchIncomingEmails
                     $message, 
                     $origFilename,
                     $attm->getContentType(),
-                    $path.'/'.$filename
+                    $path.'/'.$filename,
+                    $defaultDisk
                 );
 
                 if($attm->getContentDisposition() == 'inline'){
