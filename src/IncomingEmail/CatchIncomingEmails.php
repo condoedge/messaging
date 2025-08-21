@@ -155,7 +155,7 @@ class CatchIncomingEmails
                 $ext = \Str::afterLast($origFilename, '.');
                 $filename = \Str::uuid()->toString().($ext ? ('.'.$ext) : '');
                 $path = "mysql/attachments/path";
-                \Storage::disk('local')->makeDirectory("{$path}", 0755, true);
+                \Storage::disk('public')->makeDirectory("{$path}", 0755, true);
                 try {
                     $attm->saveContent(storage_path("app/{$path}/{$filename}"));                    
                 } catch (\Throwable $e) {
