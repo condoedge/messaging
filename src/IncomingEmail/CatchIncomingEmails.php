@@ -162,7 +162,7 @@ class CatchIncomingEmails
                 //\Storage::disk($defaultDisk)->makeDirectory("{$path}", 0755, true);
                 try {
                     $content = $attm->getContent();
-                    \Storage::disk($defaultDisk)->put($path, $content);
+                    \Storage::disk($defaultDisk)->put($path.'/'.$filename, $content);
                     //$attm->saveContent(storage_path("app/{$path}/{$filename}"));                    
                 } catch (\Throwable $e) {
                     \Log::info("Error saving attm in message: ".$message->id." - PATH: app/{$path}/{$filename}");                    
