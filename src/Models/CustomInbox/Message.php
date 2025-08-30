@@ -287,7 +287,8 @@ class Message extends Model
                 $this,
                 $file->name,
                 $file->mime_type,
-                $file->path
+                $file->path,
+                $file->disk,
             );
         });
 

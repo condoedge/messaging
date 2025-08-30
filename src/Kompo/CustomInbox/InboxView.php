@@ -122,17 +122,18 @@ class InboxView extends Query
                 break;
         }
 
-        return $q->orderByDesc('last_message_at');
+        return $q->orderByRaw('IFNULL(last_message_at, created_at) DESC');
     }
 
     public function top()
     {
         return _Rows(
-            _Select()->name('used_inbox', false)
+            new EmailAccountInboxOption(currentMailboxId()),
+            /*_Select()->name('used_inbox', false)
                 ->searchOptions(0, 'searchInboxes', 'retrieveInbox')->class('mb-0 pt-2 px-4')->class('noClear')
                 ->value(currentMailboxId())
                 ->noResultsMessage('translate.no-other-mailboxes-available')
-                ->selfPost('impersonateMailbox')->redirect('inbox'),
+                ->selfPost('impersonateMailbox')->redirect('inbox'),*/
             _Rows(
                 _ButtonGroup()
                     ->name('filters', false)
@@ -211,7 +212,7 @@ class InboxView extends Query
         $isTrash = is_null($this->isTrash) ? $thread->is_trashed : $this->isTrash;
 
         return _Flex(
-            _Html()->class('thread-color w-1 absolute inset-y-2 left-1 rounded')->class($thread->color),
+            _Html()->class('thread-color w-1 absolute inset-y-2 left-1 rounded')->class($thread->color)->attr(['data-flagcol' => $thread->color]),
             _Rows(
                 _Img($firstMessage?->sender->profile_img_url)
                     ->class('h-8 w-8 rounded-full object-cover'),
@@ -243,7 +244,7 @@ class InboxView extends Query
                     _FlexEnd(
                         Thread::flagLinkGroup('space-x-1', 'w-4 h-4')->selfPost('changeThreadFlagColor', [
                             'id' => $thread->id,
-                        ])->run('() => {syncThreadFlagColor(this)}'),
+                        ])->value($thread->flag_color)->run('() => {syncThreadFlagColor(this)}'),
                         $this->boxButton('archive-1', $isArchive ? 'unarchiveThread' : 'archiveThread', $thread, $key),
                         $this->boxButton('trash', $isTrash ? 'untrashThread' : 'trashThread', $thread, $key),
                         $this->unreadButton($thread, false),
@@ -268,6 +269,7 @@ class InboxView extends Query
             $this->inPanelUpdateHistory($e, $thread->id);
             $e->addClass('read');
             $e->activate();
+            $e->refresh('email-account-inbox-option');
         });
     }
 
@@ -365,7 +367,7 @@ class InboxView extends Query
                 'id' => $thread->id,
             ])->attr([
                 'onClick' => 'message'.$method.'(this)'
-            ]);
+            ])->refresh('email-account-inbox-option');
     }
 
     protected function inPanelUpdateHistory($e, $threadId)
@@ -453,16 +455,6 @@ class InboxView extends Query
 
 var hammerInstances = []
 activateSwipe() //for some reason, I had to add this because when Query mounted(), this func is not registered yet...
-
-
-calculateUnreadMessages()
-function calculateUnreadMessages()
-{
-    $.ajax({
-        url: "/calculate-unread-messages",
-        type: 'GET',
-    });
-}
 
 function activateSwipe()
 {

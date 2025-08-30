@@ -29,12 +29,13 @@ class Attachment extends Model
         parent::delete();
     }
 
-    public static function createAttachmentFromFile($message, $name, $mime_type, $path)
+    public static function createAttachmentFromFile($message, $name, $mime_type, $path, $disk = null)
     {
         $attm = new AppAttachment;
         $attm->name = $name;
         $attm->mime_type = $mime_type;
         $attm->path = $path;
+        $attm->disk = $disk;
         $message->attachments()->save($attm);
 
         return $attm;

@@ -79,6 +79,18 @@ class EmailAccount extends Model
         return true;
     }
 
+    public function recalculateUnreadCount()
+    {
+        $this->unread_count = Thread::notAssociatedToAnyBox()
+            ->whereHas('messages', fn($q) => $q->authUserInDistributions()
+                ->whereDoesntHave('reads', fn($q) => $q->where('email_account_id', currentMailboxId()))
+            )->count();
+
+        $this->save();
+
+        return $this->unread_count;
+    }
+
     /* ELEMENTS */
     public function getEmailOption()
     {
@@ -89,15 +101,6 @@ class EmailAccount extends Model
     public function recipientEmailWithLink()
     {
         return _Html($this->getRecipientString())->class('inline');
-    }
-
-    public function getUnreadPillHtml()
-    {
-    	if (!$this->unread_count) {
-    		return '';
-    	}
-
-    	return '<span class="rounded-full px-2 text-xs bg-danger text-white">'.$this->unread_count.'</span> ';
     }
 
     /* ACTIONS */

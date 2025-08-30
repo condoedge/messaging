@@ -16,6 +16,18 @@ class ThreadGroupsForm extends Modal
 	public $class = 'max-w-2xl overflow-y-auto mini-scroll';
 	public $style = 'max-height:95vh';
 
+	public function handle()
+	{
+		$group = request('group');
+		$recipients = static::getMatchingRecipientOptions($group);
+
+		//dd($recipients);
+		
+		return _RecipientsMultiSelect()
+			->options($recipients)
+			->default($recipients->keys());
+	}
+
 	public function body()
 	{
 		return [
@@ -57,8 +69,10 @@ class ThreadGroupsForm extends Modal
 			->inPanel('group-recipients', true);
 	}
 
-	public function showRecipientConfirmation($group)
+	public function showRecipientConfirmation()
 	{
+		$group = request('group');
+
 		$recipients = static::getMatchingRecipientOptions($group);
 		$recipientRows = _Rows(
 			$recipients->map(
@@ -68,9 +82,7 @@ class ThreadGroupsForm extends Modal
 
 		return _Rows(
             !$group ? null : _Button('messaging-confirm')->class('my-4')
-				->selfGet('getRecipientsMultiselect', [
-					'group' => $group,
-				])
+				->submit()
 				->inPanel('new-thread-recipients', true)
 				->closeModal(),
 			$recipientRows->class('overflow-y-auto mini-scroll')
@@ -80,15 +92,6 @@ class ThreadGroupsForm extends Modal
 				->icon('icon-question-circle')
 				->class('text-gray-700 text-xs text-center mt-2')
 		);
-	}
-
-	public function getRecipientsMultiselect($group)
-	{
-		$recipients = static::getMatchingRecipientOptions($group);
-		
-		return _RecipientsMultiSelect()
-			->options($recipients)
-			->default($recipients->keys());
 	}
 
 	public static function getMatchingRecipientOptions($group)
