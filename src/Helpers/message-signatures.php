@@ -32,6 +32,6 @@ function getSignatureActionButtons($signaturePanelId)
 
 function showSignatureOptionsLink()
 {
-    return _Link()->icon(_Sax('pen-add'))->balloon('messaging-include-signature', 'up')
+    return _Link()->icon(_Sax('pen-add'))->balloon('messaging-include-signature', 'up')->attr(['data-balloon-length' => 'medium'])
         ->toggleId('message-signature-panel');
 }

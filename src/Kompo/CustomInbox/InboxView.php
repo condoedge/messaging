@@ -122,7 +122,7 @@ class InboxView extends Query
                 break;
         }
 
-        return $q->orderByDesc('last_message_at');
+        return $q->orderByRaw('IFNULL(last_message_at, created_at) DESC');
     }
 
     public function top()
@@ -212,7 +212,7 @@ class InboxView extends Query
         $isTrash = is_null($this->isTrash) ? $thread->is_trashed : $this->isTrash;
 
         return _Flex(
-            _Html()->class('thread-color w-1 absolute inset-y-2 left-1 rounded')->class($thread->color),
+            _Html()->class('thread-color w-1 absolute inset-y-2 left-1 rounded')->class($thread->color)->attr(['data-flagcol' => $thread->color]),
             _Rows(
                 _Img($firstMessage?->sender->profile_img_url)
                     ->class('h-8 w-8 rounded-full object-cover'),
@@ -244,7 +244,7 @@ class InboxView extends Query
                     _FlexEnd(
                         Thread::flagLinkGroup('space-x-1', 'w-4 h-4')->selfPost('changeThreadFlagColor', [
                             'id' => $thread->id,
-                        ])->run('() => {syncThreadFlagColor(this)}'),
+                        ])->value($thread->flag_color)->run('() => {syncThreadFlagColor(this)}'),
                         $this->boxButton('archive-1', $isArchive ? 'unarchiveThread' : 'archiveThread', $thread, $key),
                         $this->boxButton('trash', $isTrash ? 'untrashThread' : 'trashThread', $thread, $key),
                         $this->unreadButton($thread, false),

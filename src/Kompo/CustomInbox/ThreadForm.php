@@ -118,7 +118,9 @@ class ThreadForm extends Form
 				            ]) :
 
 					        _Rows(
-					        	_RecipientsMultiSelect()->value($this->prefilledRecipient ? [$this->prefilledRecipient] : null),
+	        					_Panel(
+					        		_RecipientsMultiSelect()->value($this->prefilledRecipient ? [$this->prefilledRecipient] : null),
+					        	)->id('new-thread-recipients'),
 
 							    _CcToggle(),
 

@@ -4,6 +4,7 @@ namespace Condoedge\Messaging\Models\CustomInbox;
 
 use Condoedge\Utils\Models\Model;
 use App\Models\Messaging\Thread as AppThread;
+use App\Models\Messaging\Attachment;
 
 class Thread extends Model
 {
@@ -121,7 +122,9 @@ class Thread extends Model
     public static function flagOptions($dimensions = 'w-6 h-6')
     {
         return collect(AppThread::flagLabels())->mapWithKeys(fn($label, $key) => [
-            $key => _Html()->class('rounded-full')->class($dimensions)->class(AppThread::flagColors()[$key])->balloon($label, 'up-right')
+            $key => _Html()->class('rounded-full')->class($dimensions)->class(AppThread::flagColors()[$key])->balloon($label, 'up-right')->attr([
+                'data-flagcol' => AppThread::flagColors()[$key],
+            ])
         ]);
     }
 
@@ -186,7 +189,7 @@ class Thread extends Model
     {
         $this->last_message_at = now();
         $this->db_message_count = $this->messages()->count();
-        $this->db_attachment_count = $this->messages()->withCount('attachments')->value('attachments_count');
+        $this->db_attachment_count = Attachment::whereIn('message_id', $this->messages()->pluck('id'))->count();
         $this->save();
     }
 

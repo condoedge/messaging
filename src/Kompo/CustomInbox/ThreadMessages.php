@@ -110,7 +110,7 @@ class ThreadMessages extends Query
 
                 _Flex(
                     $message->attachments->map(function($attachment){
-                        return $attachment->fileThumbnail('main', 'link-to', 'download');
+                        return $attachment->fileThumbnail('main', 'preview', 'download');
                     })
                 )->class('flex-wrap mt-2')
                 ->class('message-attachments'),
