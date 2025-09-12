@@ -108,7 +108,7 @@ class ThreadForm extends Form
 		return _Rows(
 			_PageTitle($this->thread?->subject ?: 'messaging-create-communication')->class('mb-6')
 				->icon('annotation'),
-			_Columns(
+			_Rows(
 				_Rows(
 			        _Rows(
 				        $this->threadId ?
@@ -128,7 +128,7 @@ class ThreadForm extends Form
 						        	->inModal(),
 					        )
 					)->class('px-2')->class($this->boxClasses),
-				)->col('col-md-4'),
+				)->class('col-span-1'),
 				_Rows(
 					_Panel(
 						_Rows(
@@ -147,12 +147,12 @@ class ThreadForm extends Form
 						),
 						$attachmentsBox,
 						getSignatureActionButtons($this->signaturePanelId)->class('px-2'),
-					)->id('sliding-messages-form')->class('px-4')->class($this->boxClasses),
+					)->id('sliding-messages-form')->class('px-2')->class($this->boxClasses),
 
 					$this->threadId ? $this->threadHistory() : null
 
-				)->col('col-md-8'),
-			),
+				)->class('col-span-1 md:col-span-2'),
+			)->class('grid grid-cols-1 md:grid-cols-3 gap-4'),
 		);
 	}
 
@@ -178,7 +178,7 @@ class ThreadForm extends Form
 	{
 		return array_merge(request('is_draft') ? [] : [
 			'recipients' => $this->threadId ? '' : 'required_without:massive_recipients_group',
-			'subject' => $this->threadId ? '' : 'required|max:1000',
+			'subject' => $this->threadId ? '' : 'required|max:255',
 			'html' => 'required_without:attachments',
 		], FileModel::attachmentsRules());
 	}
