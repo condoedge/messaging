@@ -132,7 +132,7 @@ class InboxView extends Query
             /*_Select()->name('used_inbox', false)
                 ->searchOptions(0, 'searchInboxes', 'retrieveInbox')->class('mb-0 pt-2 px-4')->class('noClear')
                 ->value(currentMailboxId())
-                ->noResultsMessage('translate.no-other-mailboxes-available')
+                ->noResultsMessage('messaging-no-other-mailboxes-available')
                 ->selfPost('impersonateMailbox')->redirect('inbox'),*/
             _Rows(
                 _ButtonGroup()

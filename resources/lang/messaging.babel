@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<babeledit_project be_version="5.4.1" version="1.3">
+<babeledit_project be_version="5.5.0" version="1.3">
 	<!--
 
     BabelEdit project file
@@ -455,6 +455,21 @@
 						</translations>
 					</concept_node>
 					<concept_node>
+						<name>messaging-is-not-a-valid-email-address</name>
+						<description/>
+						<comment/>
+						<translations>
+							<translation>
+								<language>en-US</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>fr-FR</language>
+								<approved>false</approved>
+							</translation>
+						</translations>
+					</concept_node>
+					<concept_node>
 						<name>messaging-mark-read</name>
 						<description/>
 						<comment/>
@@ -606,6 +621,21 @@
 					</concept_node>
 					<concept_node>
 						<name>messaging-no-messages</name>
+						<description/>
+						<comment/>
+						<translations>
+							<translation>
+								<language>en-US</language>
+								<approved>false</approved>
+							</translation>
+							<translation>
+								<language>fr-FR</language>
+								<approved>false</approved>
+							</translation>
+						</translations>
+					</concept_node>
+					<concept_node>
+						<name>messaging-no-other-mailboxes-available</name>
 						<description/>
 						<comment/>
 						<translations>
@@ -1086,36 +1116,6 @@
 					</concept_node>
 					<concept_node>
 						<name>messgaging-send</name>
-						<description/>
-						<comment/>
-						<translations>
-							<translation>
-								<language>en-US</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>fr-FR</language>
-								<approved>false</approved>
-							</translation>
-						</translations>
-					</concept_node>
-					<concept_node>
-						<name>survey-back</name>
-						<description/>
-						<comment/>
-						<translations>
-							<translation>
-								<language>en-US</language>
-								<approved>false</approved>
-							</translation>
-							<translation>
-								<language>fr-FR</language>
-								<approved>false</approved>
-							</translation>
-						</translations>
-					</concept_node>
-					<concept_node>
-						<name>survey-next</name>
 						<description/>
 						<comment/>
 						<translations>
