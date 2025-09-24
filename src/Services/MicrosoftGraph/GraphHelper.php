@@ -182,7 +182,7 @@ class GraphHelper
         $invalidEmails = collect($recipients)->filter(fn($email) => !filter_var(trim($email), FILTER_VALIDATE_EMAIL));
 
         if ($invalidEmails->count()) {
-            abort(403, '"'.$invalidEmails->first().'" '.__('translate.is not a valid email address! Please correct it and try again.'));
+            abort(403, '"'.$invalidEmails->first().'" '.__('messaging-is-not-a-valid-email-address'));
         }
     }
 
