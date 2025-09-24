@@ -27,6 +27,12 @@
 	}
 }
 
+.inbox-box-button,.unreadButton,.readButton{
+	.icon-spinner{
+		display: none;
+	}
+}
+
 .messageCollapsed{
 	@apply cursor-pointer h-20 overflow-hidden;
 	.message-recipients{

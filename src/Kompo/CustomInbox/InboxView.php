@@ -328,7 +328,7 @@ class InboxView extends Query
 
     protected function boxButton($icon, $method, $thread, $key = false)
     {
-        $link = _Link()->icon(_Sax($icon,16))->class('text-level1')
+        $link = _Link()->icon(_Sax($icon,16))->class('text-level1 inbox-box-button')
             ->balloon(ucfirst(str_replace('Thread', '', $method)), 'up-right')
             ->selfPost($method, [
                 'id' => $thread->id,
