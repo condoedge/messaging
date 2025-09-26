@@ -264,8 +264,8 @@ class InboxView extends Query
         ->alignStart()
         ->class('inbox-message')
         ->class($isRead ? 'read' : '')
-        ->get('inbox.message', ['id' => $thread->id])
         ->fixChildrenSpinners()
+        ->onClick->get('inbox.message', ['id' => $thread->id])
         ->onSuccess(function($e) use($thread){
             $this->inPanelUpdateHistory($e, $thread->id);
             $e->addClass('read');
