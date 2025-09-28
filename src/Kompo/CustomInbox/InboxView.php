@@ -452,6 +452,8 @@ class InboxView extends Query
 
     public function js()
     {
+        $iframeCssUrl = url('css2/iframe.css');
+
         return <<<javascript
 
 var hammerInstances = []
@@ -517,7 +519,7 @@ function handleIframe(obj) {
 
     //add iframe CSS
     var cssLink = document.createElement("link");
-    cssLink.href = '{{ url('css2/iframe.css') }}';
+    cssLink.href = '$iframeCssUrl';
     cssLink.rel = "stylesheet";
     cssLink.type = "text/css";
     obj.contentWindow.document.head.appendChild(cssLink);
