@@ -512,6 +512,57 @@ function getClosestInboxMessage(that)
     return $(that).closest('.inbox-message').eq(0)
 }
 
+function handleIframe(obj) {
+
+    //add iframe CSS
+    var cssLink = document.createElement("link");
+    cssLink.href = '{{ url('css2/iframe.css') }}';
+    cssLink.rel = "stylesheet";
+    cssLink.type = "text/css";
+    obj.contentWindow.document.head.appendChild(cssLink);
+
+    //add target blank to links
+    var a = obj.contentWindow.document.getElementsByTagName('A');
+    for (var i =0, l=a.length; i < l; i++) {
+        a[i].setAttribute('target', '_blank')
+
+        let href = a[i].getAttribute("href")
+        if (href && (href.substr(0, 4) !== 'http')) {
+            a[i].setAttribute('href', 'https://'+href)
+        }
+    }
+
+    //Hide replies if gmail message
+    handleGmailMessage(obj)
+
+    //Initial Resize
+    resizeContent(obj)
+}
+
+function resizeContent(obj) {
+
+    $(obj).parent().css('width', $(obj).parent().width() - 10)
+
+    //resize iframe
+    obj.style.height = (obj.contentWindow.document.documentElement.offsetHeight + 10) + 'px';
+    obj.style.width = obj.contentWindow.document.body.scrollWidth + 'px';
+}
+
+function handleGmailMessage(obj)
+{
+    var gmailToHide = obj.contentWindow.document.querySelector('.gmail_quote')
+    if(!gmailToHide)
+        return;
+
+    var button = createButton('...')
+    gmailToHide.parentNode.insertBefore(button, gmailToHide)
+    button.addEventListener('click', function (event) {
+        gmailToHide.style.display = gmailToHide.style.display == '' ? 'none' : ''
+        resizeContent(obj)
+    });
+    gmailToHide.style.display = "none";
+}
+
 javascript;
     }
 
