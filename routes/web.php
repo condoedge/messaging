@@ -39,6 +39,8 @@ Route::middleware(['auth'])->group(function(){
     Route::get('attm-download/{id}', Condoedge\Messaging\Http\Controllers\AttachmentDownloadController::class)->name('attm.download');
     Route::get('attm-display/{id}', Condoedge\Messaging\Http\Controllers\AttachmentDisplayController::class)->name('attm.display');
 
+    Route::get('message-signatures/{panel_id}', Condoedge\Messaging\Kompo\CustomInbox\SignaturesQuery::class)->name('message-signatures');
+
     Route::get('mail-debug-single/{id}', Condoedge\Messaging\Http\Controllers\MailParseDebugController::class)->name('mail-debug-single');
 
 

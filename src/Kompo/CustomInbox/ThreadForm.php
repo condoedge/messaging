@@ -4,8 +4,9 @@ namespace Condoedge\Messaging\Kompo\CustomInbox;
 
 use App\Models\Messaging\Message;
 use App\Models\Messaging\Thread;
-use Condoedge\Utils\Kompo\Common\Form;
+use Condoedge\Messaging\Models\CustomInbox\Signature;
 use Condoedge\Utils\Facades\FileModel;
+use Condoedge\Utils\Kompo\Common\Form;
 
 class ThreadForm extends Form
 {
@@ -61,7 +62,7 @@ class ThreadForm extends Form
 			return;
 		}
 
-		//Signature::appendToMessage($this->model);
+		Signature::appendToMessage($this->model);
 	}
 
 	public function afterSave()
