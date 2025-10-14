@@ -25,24 +25,24 @@ class SignatureForm extends Form
     public function render()
     {
         return _Rows(
-            _Input()->placeholder('translate-messaging-signature-name')->name('name'),
-            _Html('translate-messaging-signature-elements')->class('text-sm font-semibold text-level3 mb-2'),
+            _Input()->placeholder('messaging-signature-name')->name('name'),
+            _Html('messaging-signature-elements')->class('text-sm font-semibold text-level3 mb-2'),
             _Rows(
                 _Columns(
-                	_Image('translate-messaging-signature-image')->name('image')->resize(1024)->thumbHeight('6.7rem')->col('col-md-4')
-                        ->comment('Make sure your image is already the desired width, because some email clients don\'t allow changing the dimensions'),
+                	_Image('messaging-signature-image')->name('image')->resize(1024)->thumbHeight('6.7rem')->col('col-md-4')
+                        ->comment('messaging-signature-image-sub1'),
                     /* Does not work in outlook :( outlook overwrites it */
-                    //_InputNumber('translate-messaging-width-in-pixels-optional')->name('width')->rIcon('<span class="text-gray-300">px</span>')->col('col-md-4'),
+                    //_InputNumber('messaging-width-in-pixels-optional')->name('width')->rIcon('<span class="text-gray-300">px</span>')->col('col-md-4'),
                     _Rows(
-                        _CKEditor('translate-messaging-signature-body')->name('html')
+                        _CKEditor('messaging-signature-body')->name('html')
                     		->toolbar([
                     			'bold', 'italic', 'underline', 'alignment',
                     			'|', 'heading', 'link',
                     			'|', 'fontColor', 'fontBackgroundColor', 'fontSize',
                     		])->id('signature-editor'),
-                        _Toggle('translate-messaging-remove-text-only-image')->name('only_image')
+                        _Toggle('messaging-remove-text-only-image')->name('only_image')
                             ->toggleId('signature-editor', $this->model->only_image),    
-                        _Toggle('translate-messaging-is-default-signature')->name('is_auto_insert'),                    
+                        _Toggle('messaging-is-default-signature')->name('is_auto_insert'),                    
                     )->col('col-md-8'),
                 ),
             )->class('border border-gray-300 rounded-lg px-6 py-2 mb-4'),
