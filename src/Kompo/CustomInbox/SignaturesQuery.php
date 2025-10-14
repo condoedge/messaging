@@ -30,13 +30,13 @@ class SignaturesQuery extends Query
     public function top()
     {
         return _ModalHeader(
-            _Html('messaging-signatures')->miniTitle()
+            _Html('translate-messaging-signatures')->miniTitle()
         );
     }
 
     public function bottom()
     {
-        return _Button('messaging-add-signature')
+        return _Button('translate-messaging-add-signature')
             ->icon('icon-plus')->outlined()
             ->selfCreate('getMessageSignatureForm')
             ->inPanel('signature-preview-panel')
@@ -47,7 +47,7 @@ class SignaturesQuery extends Query
     {
         return _Rows(
             _Panel(
-                _DashedBox('messaging-preview-edit-signature')->id('main-dashed-box')
+                _DashedBox('translate-messaging-preview-edit-signature')->id('main-dashed-box')
             )->id('signature-preview-panel')
             ->class('p-4')
         )->class('ml-0')
@@ -60,7 +60,7 @@ class SignaturesQuery extends Query
             _Flex2(
                 $signature->is_auto_insert ?
                     _Html()->icon('star')
-                        ->balloon('messaging.default-signature', 'right') : _Html('&nbsp; &nbsp; &nbsp;'),
+                        ->balloon('translate-messaging-default-signature', 'right') : _Html('&nbsp; &nbsp; &nbsp;'),
                 _Link($signature->name)
                     ->selfGet('setSignatureId', ['id' => $signature->id])
                     ->inPanel($this->signaturePanelId, true)
