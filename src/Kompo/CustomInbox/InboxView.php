@@ -454,7 +454,11 @@ class InboxView extends Query
     {
         $iframeCssUrl = url('css2/iframe.css');
 
+        $parentJs = method_exists(get_parent_class($this), 'js') ? parent::js() : '';
+
         return <<<javascript
+
+        {$parentJs}
 
 var hammerInstances = []
 activateSwipe() //for some reason, I had to add this because when Query mounted(), this func is not registered yet...
